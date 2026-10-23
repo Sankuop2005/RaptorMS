@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080a13">
+  <title>Team Roster — Raptor Esports</title>
+  <link rel="icon" href="/assets/raptor-eagle-mark.png" type="image/png">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/team-logos.css">
+  <link rel="stylesheet" href="/assets/css/team-detail.css">
+  <link rel="stylesheet" href="/assets/css/chatbot.css">
+  <script defer src="/assets/js/team-detail.js"></script>
+  <script defer src="/assets/js/chatbot.js"></script>
+</head>
+<body class="public-body">
+  <header class="site-header detail-header">
+    <a class="brand" href="/" aria-label="Raptor Esports home"><img src="/assets/raptor-eagle-mark.png" alt=""><span>RAPTOR<small>ESPORTS</small></span></a>
+    <a class="button button-small button-outline" href="/#teams">← All teams</a>
+  </header>
+  <main class="team-detail-main">
+    <a class="detail-back" href="/#teams">← Back to teams</a>
+    <section id="team-profile" class="team-profile-card" aria-live="polite">
+      <div class="team-detail-loading">Loading team details…</div>
+    </section>
+    <section class="team-roster-section">
+      <div class="section-heading">
+        <div><span class="eyebrow">THE LINEUP</span><h2>Team <span>roster.</span></h2></div>
+        <span id="roster-count" class="roster-count"></span>
+      </div>
+      <div id="team-roster" class="team-roster-grid"></div>
+    </section>
+  </main>
+  <footer class="site-footer"><a class="brand" href="/"><img src="/assets/raptor-eagle-mark.png" alt=""><span>RAPTOR<small>ESPORTS</small></span></a><p>Play. Compete. Grow.</p><span>© 2026 Raptor Esports</span></footer>
+</body>
+</html>

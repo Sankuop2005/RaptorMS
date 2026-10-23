@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+venv/
+env/
+
+# Local SQLite databases and journals
+*.sqlite3
+*.sqlite3-*
+*.db-journal
+
+# Secrets and local configuration
+API key.txt
+API key*.txt
+.env
+.env.*
+!.env.example
+
+# Agent and editor state
+.superpowers/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak

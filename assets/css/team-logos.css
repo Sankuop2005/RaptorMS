@@ -1,0 +1,7 @@
+.team-symbol.amber,.team-symbol.pink,.team-symbol.cyan{filter:none}
+.team-logo{width:38px;height:38px;overflow:visible;color:var(--team-logo-color);fill:currentColor;filter:drop-shadow(0 2px 8px color-mix(in srgb,var(--team-logo-color),transparent 64%))}
+.team-logo path{stroke:color-mix(in srgb,var(--team-logo-color),white 14%);stroke-width:1.2;stroke-linejoin:round}
+.team-logo-raster{width:54px;height:54px;object-fit:cover;border-radius:12px;filter:none}
+.team-logo-raster-wide{width:56px;height:30px;max-height:30px;object-fit:contain;border-radius:3px;background:#f4efd9;filter:none}
+.team-symbol-tag{background:#f4efd9;border:1px solid rgba(255,255,255,.18);overflow:hidden}
+.team-symbol-tag .team-logo-raster-wide{width:54px;height:54px;max-height:54px;object-fit:contain;border-radius:10px;background:#f4efd9}
