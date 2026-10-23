@@ -1,0 +1,46 @@
+.detail-header{max-width:none;border-bottom:1px solid rgba(255,255,255,.1)}
+.team-detail-main{max-width:1200px;margin:0 auto;padding:32px clamp(22px,6vw,76px) 80px;min-height:75vh}
+.detail-back{display:inline-flex;color:#bda5ff;font-size:13px;margin-bottom:20px}
+.detail-back:hover{color:#fff}
+.team-profile-card{display:flex;align-items:center;gap:25px;padding:30px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:radial-gradient(ellipse at 95% 10%,rgba(106,65,200,.24),transparent 42%),linear-gradient(145deg,#151729,#0e111d);box-shadow:0 18px 50px rgba(0,0,0,.18)}
+.team-profile-logo{width:112px;height:112px;flex:0 0 112px;display:grid;place-items:center;border-radius:24px;background:linear-gradient(145deg,#302158,#1d1936);overflow:hidden}
+.team-profile-logo img{width:100%;height:100%;object-fit:cover}
+.team-profile-logo img.team-detail-logo-wide{object-fit:contain;background:#f4efd9;border-radius:6px}
+.team-profile-logo .team-logo{width:76px;height:76px}
+.team-profile-copy{flex:1}
+.team-profile-copy h1{font-size:clamp(30px,5vw,48px);letter-spacing:-.04em;margin:7px 0 8px}
+.team-profile-copy p{max-width:650px;color:#b8bac8;font-size:14px;line-height:1.7;margin:0}
+.team-profile-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.team-detail-chip{padding:7px 11px;border:1px solid rgba(255,255,255,.13);border-radius:999px;color:#d8d3e7;font-size:11px;background:rgba(255,255,255,.04)}
+.team-detail-chip.is-active{color:#92ebc2;border-color:rgba(63,202,139,.28);background:rgba(41,164,108,.12)}
+.team-roster-section{padding-top:56px}
+.team-roster-section .section-heading{margin-bottom:20px}
+.roster-count{color:#a5a6b4;font-size:12px}
+.team-roster-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.roster-player{display:flex;align-items:center;gap:14px;min-width:0;padding:18px;border:1px solid rgba(255,255,255,.1);border-radius:13px;background:linear-gradient(145deg,#121522,#0d101a)}
+.player-initials{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,#6741d6,#30234b);color:#fff;font-weight:800}
+.player-avatar{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,#6741d6,#30234b);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 6px 16px rgba(83,49,160,.2)}
+.player-emblem{width:34px;height:34px;overflow:visible;fill:#f3eeff;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.player-emblem .emblem-cut{fill:#39216b}
+.player-emblem .emblem-core{fill:#ffca75}
+.player-emblem .emblem-line{fill:none;stroke:#ffca75;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.player-emblem-shisui{fill:#ff677f;filter:drop-shadow(0 0 5px rgba(255,75,111,.42))}
+.player-emblem-shisui .emblem-core{fill:#ffd9e0}
+.player-emblem-shisui .emblem-cut{fill:#a81e46}
+.player-emblem-naruto{fill:#ffbf63}
+.player-emblem-naruto .emblem-cut{fill:#623ca1}
+.player-emblem-naruto .emblem-line{fill:none;stroke:#fff0cf;stroke-width:2.2;stroke-linecap:round}
+.player-emblem-dazzler{fill:#ffe36d;filter:drop-shadow(0 0 6px rgba(255,222,87,.42))}
+.player-emblem-dazzler .emblem-cut{fill:#b875ff}
+.player-emblem-zero{fill:#8fe5ff}
+.player-emblem-zero .emblem-cut{fill:#5035a0}
+.player-emblem-zero .emblem-line{stroke:#d9f7ff}
+.roster-player-copy{min-width:0;flex:1}
+.roster-player-copy h3{margin:0 0 4px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.roster-player-copy p{margin:0;color:#a8aaba;font-size:11px}
+.roster-player-status{font-size:10px;color:#83e0b5;background:rgba(43,175,120,.14);padding:5px 8px;border-radius:999px}
+.team-detail-loading,.team-detail-error,.roster-empty{padding:30px;border:1px dashed rgba(255,255,255,.18);border-radius:12px;color:#b8bac8}
+.roster-empty{grid-column:1/-1}
+.team-logo-fallback{width:76px;height:76px;display:grid;place-items:center;border:2px solid #b69cff;border-radius:22px;color:#fff;font-weight:900;font-size:27px;background:linear-gradient(145deg,#6741d6,#242039)}
+@media(max-width:760px){.team-detail-main{padding-top:22px}.team-profile-card{align-items:flex-start;gap:18px;padding:20px}.team-profile-logo{width:78px;height:78px;flex-basis:78px;border-radius:18px}.team-profile-logo .team-logo,.team-logo-fallback{width:58px;height:58px}.team-profile-copy p{font-size:12px}.team-roster-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.team-profile-card{display:block}.team-profile-logo{margin-bottom:18px}.team-roster-grid{grid-template-columns:1fr}.site-footer{gap:10px;flex-wrap:wrap}.site-footer p{display:none}}
