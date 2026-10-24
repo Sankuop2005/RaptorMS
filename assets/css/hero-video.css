@@ -1,0 +1,41 @@
+/* Raptor hero background video
+   ------------------------------------------------------------------
+   Plain looping background clip for the homepage hero — no scroll
+   scrubbing. The video fills the .hero-art layer and autoplays muted,
+   looping forever; the .hero-scene still beneath it stays as the
+   poster + fallback (slow network, blocked autoplay, reduced motion),
+   so the art area is never blank.
+
+   The legibility scrim is the existing .hero-art:after gradient from
+   styles.css — it paints above this layer, which is what keeps the
+   poster copy readable over moving footage.
+   ------------------------------------------------------------------ */
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+  /* hidden until the decoder paints a real frame: avoids the black
+     flash you get showing a video before its first frame is ready */
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 0;
+}
+.hero-video.video-live {
+  opacity: 1;
+}
+
+/* narrow screens: bias the crop toward the right, same as the still */
+@media (max-width: 700px) {
+  .hero-video { object-position: 62% center; }
+}
+
+/* reduced motion: no autoplaying footage — the still image carries
+   the hero exactly as it did before the video existed */
+@media (prefers-reduced-motion: reduce) {
+  .hero-video { display: none; }
+}

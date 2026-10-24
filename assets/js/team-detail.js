@@ -5,7 +5,7 @@
     phoenix: "/assets/team-logos/phoenix.png",
     shadow: "/assets/team-logos/shadow.png",
     vitality: "/assets/team-logos/vitality.png",
-    apex: "/assets/team-logos/apex.png"
+    apex: "/assets/team-logos/apex.jpg"
   };
   const nameKey = name => String(name || "").toLowerCase();
   const initials = name => String(name || "Team").split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
@@ -42,7 +42,7 @@
       roster.innerHTML = players.map((player, index) => '<article class="roster-player">' + playerEmblem(player, index) + '<div class="roster-player-copy"><h3>' + safe(player.name) + '</h3><p>' + safe(player.ign || "Player") + ' · ' + safe(player.role || "Roster") + '</p></div><span class="roster-player-status">' + safe(player.status || "Active") + '</span></article>').join("") || '<div class="roster-empty">No players have been added to this roster yet.</div>';
     })
     .catch(error => {
-      profile.innerHTML = '<div class="team-detail-error">' + safe(error.message) + ' <a class="text-link" href="/#teams">Back to all teams</a></div>';
+      profile.innerHTML = '<div class="team-detail-error">' + safe(error.message) + ' <a class="text-link" href="/#roster-scrub">Back to all teams</a></div>';
       document.querySelector(".team-roster-section").hidden = true;
     });
 })();

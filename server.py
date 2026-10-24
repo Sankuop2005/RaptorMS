@@ -314,6 +314,8 @@ class PortalHandler(BaseHTTPRequestHandler):
             return send_json(self, 404, {"error": "Not found"})
         if path in ("/", "/index.html"):
             return self.serve_file(ROOT / "index.html")
+        if path.lower() == "/hero-video.mp4":
+            return self.serve_file(ROOT / "Hero-video.mp4")
         if path in ("/login", "/login.html"):
             return self.serve_file(ROOT / "login.html")
         if path in ("/admin", "/admin.html", "/dashboard"):
@@ -340,7 +342,7 @@ class PortalHandler(BaseHTTPRequestHandler):
             resolved = path.resolve(strict=True)
             if ROOT.resolve() not in resolved.parents and resolved != ROOT.resolve():
                 return send_json(self, 403, {"error": "Forbidden"})
-            safe_suffixes = {".html", ".css", ".js", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".ico", ".woff", ".woff2", ".ttf"}
+            safe_suffixes = {".html", ".css", ".js", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".ico", ".woff", ".woff2", ".ttf", ".mp4", ".webm"}
             if resolved.suffix.lower() not in safe_suffixes:
                 return send_json(self, 404, {"error": "Page not found"})
             data = resolved.read_bytes()
@@ -360,14 +362,44 @@ class PortalHandler(BaseHTTPRequestHandler):
             ".woff": "font/woff",
             ".woff2": "font/woff2",
             ".ttf": "font/ttf",
+            ".mp4": "video/mp4",
+            ".webm": "video/webm",
         }.get(resolved.suffix.lower(), "application/octet-stream")
-        self.send_response(200)
+        # Byte-range support for video: scrubbing relies on seekable ranges,
+        # and without 206/Content-Range the browser clamps every video seek
+        # to byte 0 (the clip freezes on its first frame mid-scrub).
+        total = len(data)
+        start, end, status = 0, total - 1, 200
+        is_media = resolved.suffix.lower() in (".mp4", ".webm")
+        range_header = self.headers.get("Range", "") if is_media else ""
+        if range_header.startswith("bytes="):
+            a, _, b = range_header[6:].partition("-")
+            try:
+                if a:
+                    start = max(0, int(a)); end = int(b) if b else total - 1
+                elif b:
+                    start = max(0, total - int(b))
+                end = min(end, total - 1)
+                if start > end or start >= total:
+                    self.send_response(416)
+                    self.send_header("Content-Range", f"bytes */{total}")
+                    self.end_headers()
+                    return
+            except ValueError:
+                start, end = 0, total - 1
+            if start > 0 or end < total - 1:
+                status = 206
+        self.send_response(status)
         self.send_header("Content-Type", content_type)
-        self.send_header("Content-Length", str(len(data)))
+        if is_media:
+            self.send_header("Accept-Ranges", "bytes")
+        if status == 206:
+            self.send_header("Content-Range", f"bytes {start}-{end}/{total}")
+        self.send_header("Content-Length", str(end - start + 1))
         self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")
+        self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")
         self.end_headers()
-        self.wfile.write(data)
+        self.wfile.write(data[start:end + 1])
 
     def handle_get_api(self, path: str):
         if path == "/api/public":
@@ -640,7 +672,7 @@ class PortalHandler(BaseHTTPRequestHandler):
 
 def main():
     db.initialize()
-    host, port = "127.0.0.1", 8000
+    host, port = "127.0.0.1", 5000
     print(f"Raptor Esports portal running at http://{host}:{port}")
     print("Local demo accounts use Raptor@2026 (override with RAPTOR_DEMO_PASSWORD).")
     ThreadingHTTPServer((host, port), PortalHandler).serve_forever()

@@ -1,0 +1,594 @@
+/* Raptor roster scroll-scrub stage
+   ------------------------------------------------------------------
+   Pinned cinematic section directly under the hero: scroll drives
+   video.currentTime 0 -> 10s (the Poseidon X-Suit transformation),
+   and the three roster reveals crossfade on the suit's own morph
+   beats. Overlays use transform/opacity only so scrubbing never
+   costs a relayout; palette is the established Raptor violet set:
+   #030010 #090227 #14053E #240A59 #5419A2 #792ACF #AE48ED #EB84F9 #6F012D #FDDAFE
+   Two display accents sit on top: a reference-red stencil face for
+   the team name + player names, and an angular italic face for the
+   THE ROSTER headline. Both faces are self-hosted OFL woff2 files
+   (assets/fonts) so the 'self' CSP holds.
+   ------------------------------------------------------------------ */
+
+/* "Raptor Stencil" — the Revenge lettering look: blocky, stencil-cut,
+   all-caps. Used ONLY for the team name and the player names. */
+@font-face {
+  font-family: "Raptor Stencil";
+  src: url("/assets/fonts/saira-stencil-one-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* "Raptor Dream" — the Dream lettering look: angular, futuristic. */
+@font-face {
+  font-family: "Raptor Dream";
+  src: url("/assets/fonts/orbitron-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+#roster-scrub {
+  --rs-scroll: 5.6; /* scrub distance in viewport-heights (pinned part) */
+  --rs-bezel: max(clamp(22px, 6vw, 76px), calc((100% - 1228px)/2));
+  --rs-accent-1: #792ACF;
+  --rs-accent-2: #AE48ED;
+  --rs-accent-3: #EB84F9;
+  --rs-ink: #FDDAFE;
+  --rs-red: #E0181B; /* the Revenge reference red — names only */
+  position: relative;
+  height: calc(100vh * (1 + var(--rs-scroll)));
+  height: calc(100svh * (1 + var(--rs-scroll)));
+  background: #030010;
+  z-index: 1;
+}
+
+.rs-pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 72% 8%, #240A59 0%, transparent 55%),
+    radial-gradient(120% 100% at 8% 88%, #14053E 0%, transparent 60%),
+    linear-gradient(160deg, #090227 0%, #030010 58%);
+  color: var(--rs-ink);
+}
+
+/* ---- media layer ------------------------------------------------ */
+
+.rs-media, .rs-media > * { position: absolute; inset: 0; }
+.rs-poster {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: .94;
+  filter: saturate(1.04);
+}
+.rs-video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0;
+  transition: opacity .45s ease;
+}
+.rs-video.rs-live { opacity: 1; }
+
+/* form-tinted atmosphere: two crossfading radial glows + vig */
+.rs-glow { pointer-events: none; filter: blur(0px); mix-blend-mode: screen; opacity: 0; transition: opacity .6s ease; }
+.rs-glow-a { background: radial-gradient(42% 60% at 50% 34%, rgba(121,42,207,.34), transparent 70%); }
+.rs-glow-b { background: radial-gradient(46% 62% at 50% 32%, rgba(235,132,249,.30), transparent 72%); }
+#roster-scrub.rs-f0 .rs-glow-a { opacity: 1; }
+#roster-scrub.rs-f1 .rs-glow-a { opacity: .9; }
+#roster-scrub.rs-f2 .rs-glow-a { opacity: .55; }
+#roster-scrub.rs-f2 .rs-glow-b { opacity: 1; }
+#roster-scrub.rs-f1 .rs-glow-b { opacity: .34; }
+
+.rs-scrim {
+  pointer-events: none;
+  background:
+    linear-gradient(100deg, rgba(3,0,16,.82) 0%, rgba(3,0,16,.55) 30%, rgba(3,0,16,0) 62%),
+    linear-gradient(0deg, rgba(3,0,16,.78) 0%, transparent 30%),
+    linear-gradient(180deg, rgba(3,0,16,.6) 0%, transparent 22%);
+}
+.rs-grain {
+  pointer-events: none;
+  opacity: .05;
+  background-image: radial-gradient(rgba(253,218,254,.5) .5px, transparent .6px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+}
+
+/* ---- copy ------------------------------------------------------- */
+
+.rs-copy {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: calc(84px + 4vh) var(--rs-bezel) calc(30px + env(safe-area-inset-bottom));
+  z-index: 2;
+}
+
+.rs-heading {
+  display: block;
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(6px);
+  transition: opacity .8s ease, transform .8s cubic-bezier(.16,.84,.28,1), filter .8s ease, letter-spacing .8s ease;
+  letter-spacing: .02em;
+}
+#roster-scrub.rs-open .rs-heading { opacity: 1; transform: none; filter: blur(0); }
+#roster-scrub.rs-open .rs-heading.rs-compacted { opacity: .86; transform: scale(.465) translateX(.4vw); }
+
+.rs-kicker {
+  display: block;
+  font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: #EB84F9;
+  text-shadow: 0 2px 22px rgba(159,10,163,.45);
+}
+.rs-title {
+  font-family: "Raptor Dream", "Orbitron", "Michroma", Impact, system-ui, sans-serif;
+  font-weight: 700;
+  display: block;
+  margin: 14px 0 0;
+  font-size: clamp(44px, 6vw, 92px);
+  line-height: .95;
+  text-transform: uppercase;
+  transform: skewX(-9deg); /* the Dream mark's forward-lean */
+  transform-origin: left top;
+  background: linear-gradient(101deg, #FDDAFE 6%, #EB84F9 38%, #AE48ED 66%, #792ACF 96%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 34px rgba(84,25,162,.55));
+  white-space: nowrap;
+}
+
+/* team identity: lower-left stack, like the original roster block —
+   logo, game label, name, tagline, count; crossfaded by scrub time */
+.rs-ident {
+  position: absolute;
+  left: var(--rs-bezel);
+  bottom: 17vh;
+  width: min(500px, 44vw);
+  height: 278px;
+  z-index: 2;
+}
+.rs-id {
+  position: absolute;
+  inset: 0 0 auto 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(18px);
+  will-change: opacity, transform;
+  color: #FDDAFE;
+}
+.rs-team-logo {
+  float: left;
+  display: block;
+  width: 52px; height: 52px;
+  object-fit: contain;
+  border-radius: 11px;
+  padding: 3px;
+  background: radial-gradient(75% 75% at 50% 40%, rgba(174,72,237,.24), transparent 72%);
+  filter: drop-shadow(0 4px 14px rgba(84,25,162,.55)) saturate(1.08);
+}
+.rs-team-game {
+  display: block;
+  margin: 6px 0 0 66px;
+  font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--rs-kc, #EB84F9);
+}
+/* the Revenge treatment: red stencil display — scoped to exactly the
+   team name (here) and the player names (on the cards) */
+.rs-team-name {
+  display: block;
+  margin: 4px 0 0 60px;
+  font-family: "Raptor Stencil", "Anton", Impact, "Arial Narrow", sans-serif;
+  font-weight: 400;
+  font-size: clamp(30px, 3.7vw, 50px);
+  line-height: .98;
+  text-transform: uppercase;
+  color: var(--rs-red, #E0181B);
+  text-shadow: 0 2px 22px rgba(224,24,27,.4), 0 4px 24px rgba(3,0,16,.9);
+}
+.rs-team-line {
+  clear: both;
+  margin: 12px 0 0;
+  max-width: 44ch;
+  font-size: 14px;
+  line-height: 1.62;
+  color: rgba(253,218,254,.78);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rs-team-under {
+  display: block;
+  width: 64px;
+  height: 2px;
+  margin: 14px 0 10px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--rs-kc, #AE48ED), transparent);
+  box-shadow: 0 0 18px var(--rs-kc, #AE48ED);
+}
+.rs-team-foot {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+.rs-team-foot strong {
+  font-family: "Anton", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 28px;
+  color: var(--rs-kc, #EB84F9);
+  text-shadow: 0 0 22px rgba(174,72,237,.55), 0 2px 18px rgba(3,0,16,.8);
+}
+.rs-team-foot span {
+  font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: rgba(253,218,254,.62);
+}
+
+/* player cards: right side, players only — the suit reveal stays
+   unobstructed; each card is the player's own artwork from the DB
+   with the red stencil IGN over it and the role riding as a chip */
+.rs-side {
+  position: absolute;
+  top: 50%;
+  right: var(--rs-bezel);
+  transform: translateY(-50%);
+  width: min(340px, 27vw);
+  height: clamp(400px, 66vh, 520px);
+  z-index: 2;
+}
+.rs-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(26px);
+  will-change: opacity, transform;
+  border-radius: 16px;
+  padding: 10px;
+  background: linear-gradient(152deg, rgba(20,5,62,.62), rgba(9,2,39,.45));
+  border: 1px solid rgba(174,72,237,.26);
+  box-shadow: 0 34px 90px rgba(3,0,16,.55), inset 0 1px 0 rgba(253,218,254,.07);
+}
+@supports (backdrop-filter: blur(1px)) {
+  .rs-panel { backdrop-filter: blur(12px) saturate(1.1); background: linear-gradient(152deg, rgba(20,5,62,.42), rgba(9,2,39,.3)); }
+}
+.rs-panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 20px;
+  width: 64px; height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--rs-kc, #AE48ED), transparent);
+  box-shadow: 0 0 18px var(--rs-kc, #AE48ED);
+}
+
+.rs-players {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+}
+.rs-pcard {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  border-radius: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(174,72,237,.2);
+  box-shadow: 0 10px 26px rgba(3,0,16,.42);
+  opacity: 0;
+  transform: translateX(16px);
+  transition: opacity .45s ease, transform .5s cubic-bezier(.16,.84,.28,1);
+  transition-delay: 0ms; /* cards leave promptly; the delay below staggers only the entrance */
+}
+.rs-panel.rs-on .rs-pcard {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: calc(120ms + var(--ri, 0) * 70ms);
+}
+.rs-pcard img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 44%; /* the 512×512 masks are centered — keep the face band in frame */
+}
+.rs-pscrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(3,0,16,.92) 0%, rgba(3,0,16,.5) 30%, rgba(3,0,16,0) 58%),
+    linear-gradient(to bottom, rgba(3,0,16,.3), rgba(3,0,16,0) 24%);
+}
+.rs-pname {
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  bottom: 6px;
+  font-family: "Raptor Stencil", "Anton", Impact, "Arial Narrow", sans-serif;
+  font-weight: 400;
+  font-size: clamp(15px, 1.35vw, 19px);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--rs-red, #E0181B);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 10px rgba(3,0,16,.9), 0 0 16px rgba(224,24,27,.35);
+}
+.rs-prole {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 3px 8px 2px;
+  font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 8.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #EB84F9;
+  background: rgba(3,0,16,.55);
+  border: 1px solid rgba(174,72,237,.32);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.rs-pav { /* stands in only while a player has no artwork in the DB */
+  position: absolute;
+  left: 10px;
+  top: 12px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  font-style: normal;
+  font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: .05em;
+  color: #FDDAFE;
+  background: linear-gradient(150deg, var(--rs-kc, #AE48ED), #5419A2);
+  box-shadow: inset 0 0 0 1px rgba(253,218,254,.22);
+}
+
+/* final link: manage team (goes to the sign-in/admin entry) */
+.rs-cta {
+  position: absolute;
+  left: 50%;
+  bottom: calc(38px + env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 40px;
+  padding: 0 4px;
+  font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: #bda5ff;
+  text-decoration: none;
+  transform: translateX(-50%) translateY(18px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s ease, transform .5s ease, color .25s ease, text-shadow .25s ease;
+  white-space: nowrap;
+}
+#roster-scrub.rs-cta-in .rs-cta { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.rs-cta:hover, .rs-cta:focus-visible { color: #EB84F9; text-shadow: 0 0 22px rgba(235,132,249,.6); }
+.rs-cta span { border-bottom: 1px solid rgba(235,132,249,.35); padding-bottom: 2px; transition: border-color .25s ease; }
+.rs-cta:hover span, .rs-cta:focus-visible span { border-color: #EB84F9; }
+
+/* ---- rail + scroll cue ------------------------------------------ */
+
+.rs-rail {
+  position: absolute;
+  left: clamp(14px, 2.2vw, 28px); /* the mascot rail: stays on the left edge, identity sits beside it */
+  top: 50%;
+  height: min(280px, 36vh);
+  width: 30px;
+  transform: translateY(-50%);
+  z-index: 3;
+  pointer-events: none;
+}
+.rs-rail-track {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: rgba(253,218,254,.16);
+}
+.rs-rail-fill {
+  position: absolute;
+  top: -2%; left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  height: 104%;
+  border-radius: 2px;
+  transform-origin: top center;
+  background: linear-gradient(180deg, #EB84F9, #792ACF);
+  box-shadow: 0 0 14px rgba(174,72,237,.8);
+}
+.rs-dot {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: rgba(253,218,254,.28);
+  border: 1px solid rgba(253,218,254,.4);
+  transition: background .45s ease, box-shadow .45s ease, border-color .45s ease;
+}
+.rs-dot.rs-hot {
+  background: var(--rs-kc, #EB84F9);
+  border-color: var(--rs-kc, #EB84F9);
+  box-shadow: 0 0 14px var(--rs-kc, #EB84F9);
+}
+.rs-dot:nth-child(3) { top: 15%; }
+.rs-dot:nth-child(4) { top: 50%; }
+.rs-dot:nth-child(5) { top: 85%; }
+
+.rs-cue {
+  position: absolute;
+  left: var(--rs-bezel);
+  bottom: calc(34px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 3;
+  opacity: 1;
+  transition: opacity .5s ease;
+  pointer-events: none;
+}
+.rs-cue span {
+  font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: rgba(253,218,254,.55);
+}
+.rs-cue i {
+  display: block;
+  width: 30px; height: 1px;
+  background: linear-gradient(90deg, rgba(235,132,249,.8), transparent);
+  animation: rs-cue-pulse 1.9s ease-in-out infinite;
+}
+.rs-cue.rs-off { opacity: 0; }
+@keyframes rs-cue-pulse { 0%,100% { transform: scaleX(.35); opacity: .4; transform-origin: left; } 50% { transform: scaleX(1); opacity: 1; } }
+
+/* data-not-landed skeleton state (before roster data arrives) */
+.rs-id.rs-empty .rs-team-name { color: rgba(224,24,27,.35); }
+
+/* ---- responsive ------------------------------------------------- */
+
+@media (max-width: 1060px) {
+  #roster-scrub .rs-side { width: min(310px, 30vw); }
+  .rs-ident { width: min(460px, 46vw); }
+}
+
+@media (max-width: 860px) {
+  #roster-scrub { --rs-scroll: 4.8; }
+  .rs-title { font-size: clamp(30px, 8.6vw, 46px); }
+  #roster-scrub.rs-open .rs-heading.rs-compacted { transform: scale(.5) translateX(1vw); }
+  .rs-copy { padding: calc(74px + 3vh) 20px calc(110px + env(safe-area-inset-bottom)); }
+
+  /* identity travels with the copy flow, compact */
+  .rs-ident { position: relative; left: auto; bottom: auto; width: auto; height: 132px; margin-top: 14px; }
+  .rs-id { left: 0; right: 0; width: auto; }
+  .rs-team-logo { width: 38px; height: 38px; border-radius: 9px; padding: 2px; }
+  .rs-team-game { margin: 4px 0 0 46px; font-size: 10px; }
+  .rs-team-name { margin: 3px 0 0 42px; font-size: clamp(21px, 6.4vw, 30px); }
+  .rs-team-line { margin-top: 8px; font-size: 12px; line-height: 1.45; -webkit-line-clamp: 1; }
+  .rs-team-under { display: none; }
+  .rs-team-foot { margin-top: 5px; }
+  .rs-team-foot strong { font-size: 17px; }
+
+  /* players: bottom sheet, art cards in two columns */
+  .rs-side {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: auto;
+    bottom: calc(112px + env(safe-area-inset-bottom));
+    transform: none;
+    width: auto;
+    height: auto;
+  }
+  .rs-panel {
+    position: absolute;
+    inset: auto 0 0 0; /* bottom-anchored so the sheet never slides under the safe area */
+    border-radius: 14px;
+    padding: 9px;
+    backdrop-filter: none;
+    background: linear-gradient(152deg, rgba(20,5,62,.92), rgba(9,2,39,.84));
+  }
+  .rs-panel::before { left: 14px; }
+  .rs-players { flex: 0 0 auto; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-rows: minmax(58px, auto); gap: 5px; }
+  .rs-pcard { border-radius: 9px; }
+  .rs-pname { left: 8px; right: 8px; bottom: 4px; font-size: 12.5px; }
+  .rs-prole { top: 4px; right: 4px; padding: 2px 6px 1px; font-size: 7.5px; }
+  .rs-pav { width: 22px; height: 22px; font-size: 8.5px; left: 6px; top: 6px; }
+
+  .rs-scrim {
+    background:
+      linear-gradient(100deg, rgba(3,0,16,.8) 0%, rgba(3,0,16,.5) 44%, rgba(3,0,16,.05) 78%),
+      linear-gradient(0deg, rgba(3,0,16,.88) 0%, rgba(3,0,16,.42) 26%, transparent 46%);
+  }
+  .rs-poster, .rs-video { object-position: center 34%; }
+  .rs-rail { left: 10px; right: auto; height: 200px; opacity: .85; }
+  .rs-cta {
+    left: 50%;
+    transform: translateX(-50%) translateY(14px) scale(.94);
+    min-width: 0;
+    padding: 0 18px;
+    font-size: 12px;
+  }
+  .rs-cue { bottom: calc(80px + env(safe-area-inset-bottom)); left: 20px; }
+}
+
+@media (max-width: 480px) {
+  .rs-ident { height: 112px; }
+  .rs-team-line { display: none; }
+  .rs-side { bottom: calc(118px + env(safe-area-inset-bottom)); }
+  .rs-players { grid-auto-rows: minmax(50px, auto); }
+  .rs-cta { bottom: calc(30px + env(safe-area-inset-bottom)); }
+}
+
+/* ---- reduced motion: static roster band, no pin, no video ------- */
+
+@media (prefers-reduced-motion: reduce) {
+  #roster-scrub { height: auto; }
+  .rs-pin {
+    position: relative;
+    height: auto;
+    overflow: visible;
+    padding: 84px var(--rs-bezel) 64px;
+  }
+  .rs-media { position: relative; inset: auto; height: clamp(240px, 34vw, 472px); border-radius: 16px; overflow: hidden; border: 1px solid rgba(174,72,237,.28); box-shadow: 0 30px 80px rgba(3,0,16,.6); }
+  .rs-video, .rs-glow, .rs-scrim, .rs-grain, .rs-cue, .rs-rail { display: none; }
+  .rs-copy { position: relative; inset: auto; padding: 34px 0 0; }
+  .rs-heading, .rs-cta { opacity: 1 !important; transform: none !important; filter: none; }
+  .rs-heading.rs-compacted { transform: none !important; }
+  .rs-cta { position: static; pointer-events: auto; margin-top: 26px; transform: none; }
+  .rs-ident { position: relative; left: auto; bottom: auto; width: auto; height: auto; margin-top: 30px; }
+  .rs-id { position: relative; inset: auto; opacity: 1 !important; visibility: visible !important; transform: none !important; }
+  .rs-id + .rs-id { margin-top: 30px; }
+  .rs-side { position: relative; left: auto; right: auto; top: auto; bottom: auto; transform: none; width: auto; height: auto; display: flex; flex-direction: column; gap: 18px; margin-top: 30px; }
+  .rs-panel { position: relative; inset: auto; opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto; }
+  .rs-players { grid-template-rows: none; grid-auto-rows: minmax(96px, auto); }
+  .rs-pcard { opacity: 1 !important; transform: none !important; transition: none; }
+}
+
+@media (max-width: 860px) and (prefers-reduced-motion: reduce) {
+  .rs-pin { padding: 64px 18px 48px; }
+  .rs-media { height: min(62vw, 300px); }
+  .rs-ident { height: auto; min-height: 120px; }
+}

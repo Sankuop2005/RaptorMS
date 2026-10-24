@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import random
 import secrets
 import sqlite3
 from contextlib import contextmanager
@@ -13,8 +14,15 @@ import rbac
 ROOT = Path(__file__).resolve().parent
 DB_PATH = Path(os.environ.get("RAPTOR_DB_PATH", ROOT / "data" / "raptor.sqlite3"))
 TABLES = {"players", "teams", "tournaments", "matches", "expenses", "performance_records"}
+# Player avatar art shipped in assets/players/ (public, same-origin). Anything not
+# in this tuple is rejected by _validate and falls back to the initials circle.
+AVATARS = (
+    "01-hood.png", "02-raptor.png", "03-trooper.png", "04-oni.png",
+    "05-wolf.png", "06-skull.png", "07-fox.png", "08-phoenix.png",
+)
+AVATAR_DIR = "assets/players"
 FIELDS = {
-    "players": {"name", "ign", "role", "team_id", "status", "game", "joined_at"},
+    "players": {"name", "ign", "role", "team_id", "status", "game", "joined_at", "avatar"},
     "teams": {"name", "game", "players_count", "status", "description", "accent"},
     "tournaments": {"name", "game", "date", "prize_pool", "status", "location", "team_id"},
     "matches": {"name", "game", "date", "time", "opponent", "tournament_id", "team_id", "status", "result"},
@@ -82,6 +90,9 @@ def initialize() -> None:
         tournament_columns = {row["name"] for row in db.execute("PRAGMA table_info(tournaments)")}
         if "team_id" not in tournament_columns:
             db.execute("ALTER TABLE tournaments ADD COLUMN team_id INTEGER REFERENCES teams(id) ON DELETE SET NULL")
+        player_columns = {row["name"] for row in db.execute("PRAGMA table_info(players)")}
+        if "avatar" not in player_columns:
+            db.execute("ALTER TABLE players ADD COLUMN avatar TEXT NOT NULL DEFAULT ''")
         db.execute("UPDATE matches SET team_id=(SELECT id FROM teams WHERE teams.game=matches.game ORDER BY id LIMIT 1) WHERE team_id IS NULL")
         db.execute("UPDATE tournaments SET team_id=(SELECT id FROM teams WHERE teams.game=tournaments.game ORDER BY id LIMIT 1) WHERE team_id IS NULL")
         db.executescript("""
@@ -114,6 +125,30 @@ def initialize() -> None:
         db.execute("UPDATE matches SET team_id=(SELECT id FROM teams WHERE teams.game=matches.game ORDER BY id LIMIT 1) WHERE team_id IS NULL")
         db.execute("UPDATE tournaments SET team_id=(SELECT id FROM teams WHERE teams.game=tournaments.game ORDER BY id LIMIT 1) WHERE team_id IS NULL")
     expand_sample_data()
+    assign_player_avatars()
+
+
+def assign_player_avatars() -> dict:
+    """One-time: give every unassigned player one of AVATARS, round-robin over a
+    shuffled deck so all eight arts appear and no art dominates. Guarded by a
+    migration key so later restarts never reshuffle a player the admin picked."""
+    migration_key = "player_avatars_v1"
+    with get_connection() as conn:
+        if conn.execute("SELECT 1 FROM data_migrations WHERE key=?", (migration_key,)).fetchone():
+            return {"assigned": 0}
+        rows = conn.execute("SELECT id FROM players ORDER BY id").fetchall()
+        if not rows:
+            conn.execute("INSERT INTO data_migrations(key) VALUES(?)", (migration_key,))
+            return {"assigned": 0}
+        deck = list(AVATARS)
+        random.Random(len(rows) * 7 + sum(row["id"] for row in rows)).shuffle(deck)
+        assigned = 0
+        for index, row in enumerate(rows):
+            avatar = deck[index % len(deck)]
+            cursor = conn.execute("UPDATE players SET avatar=? WHERE id=? AND (avatar IS NULL OR avatar='')", (avatar, row["id"]))
+            assigned += cursor.rowcount
+        conn.execute("INSERT INTO data_migrations(key) VALUES(?)", (migration_key,))
+    return {"assigned": assigned}
 
 
 def _seed_role_accounts(conn: sqlite3.Connection) -> None:
@@ -211,6 +246,13 @@ def _validate(table: str, values: dict) -> dict:
     for key, choices in enums.get(table, {}).items():
         if key in clean and clean[key] not in choices:
             raise ValueError(f"Choose a valid {key}")
+    if table == "players" and "avatar" in clean:
+        # Only shipped art is allowed; "" means "no art" and renders initials.
+        # Guarded by `in clean` so updates that omit the field never wipe it.
+        avatar = str(clean.get("avatar") or "").strip()
+        if avatar and avatar not in AVATARS:
+            raise ValueError("Choose one of the available player art options")
+        clean["avatar"] = avatar
     if table == "expenses":
         try: clean["amount"] = round(float(clean["amount"]), 2)
         except (ValueError, TypeError): raise ValueError("Amount must be a number")
@@ -327,7 +369,7 @@ def public_team_data(team_id: int) -> dict | None:
         if not row:
             return None
         players = db.execute(
-            "SELECT id,name,ign,role,status,game FROM players WHERE team_id=? ORDER BY id",
+            "SELECT id,name,ign,role,status,game,avatar FROM players WHERE team_id=? ORDER BY id",
             (team_id,),
         )
         return {"team": dict(row), "players": [dict(player) for player in players]}

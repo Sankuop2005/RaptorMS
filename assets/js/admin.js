@@ -7,8 +7,21 @@
   let currentPage = "dashboard", currentUser = null, permissions = {};
   let editing = null;
   let teams = [], tournaments = [];
+  // CSP forbids inline onerror, so a missing avatar file is caught here
+  // (capture phase: media error events do not bubble) and swapped for initials.
+  document.addEventListener("error", event => {
+    const img = event.target;
+    if (!(img instanceof HTMLImageElement) || !img.classList.contains("admin-player-avatar-art")) return;
+    const fallback = img.dataset.fallback || "?";
+    const span = document.createElement("span");
+    span.className = "admin-player-avatar-fallback";
+    span.textContent = fallback;
+    img.replaceWith(span);
+    const holder = span.closest(".admin-player-avatar");
+    if (holder) holder.classList.remove("has-art");
+  }, true);
   const config = {
-    players: { title: "Players", singular: "Player", fields: [{ key: "name", label: "Full name", required: true }, { key: "ign", label: "In-game name", required: true }, { key: "role", label: "Role", required: true }, { key: "game", label: "Game", type: "select", options: ["BGMI", "Free Fire", "Valorant", "Other"] }, { key: "team_id", label: "Team", type: "select", optionsFrom: "teams", optional: true }, { key: "status", label: "Status", type: "select", options: ["Active", "Inactive", "Trial"], required: true }] },
+    players: { title: "Players", singular: "Player", fields: [{ key: "name", label: "Full name", required: true }, { key: "ign", label: "In-game name", required: true }, { key: "role", label: "Role", required: true }, { key: "game", label: "Game", type: "select", options: ["BGMI", "Free Fire", "Valorant", "Other"] }, { key: "team_id", label: "Team", type: "select", optionsFrom: "teams", optional: true }, { key: "status", label: "Status", type: "select", options: ["Active", "Inactive", "Trial"], required: true }, { key: "avatar", label: "Player art", type: "avatar", optional: true, wide: true }] },
     teams: { title: "Teams", singular: "Team", fields: [{ key: "name", label: "Team name", required: true }, { key: "game", label: "Game", type: "select", options: ["BGMI", "Free Fire", "Valorant", "Other"], required: true }, { key: "status", label: "Status", type: "select", options: ["Active", "Recruiting", "Inactive"] }, { key: "accent", label: "Team color", type: "select", options: ["violet", "amber", "pink", "cyan"] }, { key: "description", label: "Description", type: "textarea", wide: true }] },
     tournaments: { title: "Competitions", singular: "Competition", fields: [{ key: "name", label: "Competition name", required: true }, { key: "game", label: "Game", type: "select", options: ["BGMI", "Free Fire", "Valorant", "Other"], required: true }, { key: "team_id", label: "Team", type: "select", optionsFrom: "teams", optional: true }, { key: "date", label: "Date", type: "date", required: true }, { key: "prize_pool", label: "Prize pool (₹)", type: "number", min: "0", required: true }, { key: "status", label: "Status", type: "select", options: ["Upcoming", "Ongoing", "Completed"], required: true }, { key: "location", label: "Location", placeholder: "Online or city" }] },
     matches: { title: "Matches", singular: "Match", fields: [{ key: "name", label: "Match name", required: true }, { key: "game", label: "Game", type: "select", options: ["BGMI", "Free Fire", "Valorant", "Other"], required: true }, { key: "team_id", label: "Team", type: "select", optionsFrom: "teams", optional: true }, { key: "date", label: "Date", type: "date", required: true }, { key: "time", label: "Time", placeholder: "08:00 PM", required: true }, { key: "opponent", label: "Opponent" }, { key: "tournament_id", label: "Competition", type: "select", optionsFrom: "tournaments", optional: true }, { key: "status", label: "Status", type: "select", options: ["Upcoming", "Live", "Completed"], required: true }, { key: "result", label: "Result" }] },
@@ -34,17 +47,46 @@
   const normalizeKey = value => String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "");
   const initials = value => String(value ?? "").trim().split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join("").toUpperCase() || "?";
   const teamLogoKey = team => { const key = normalizeKey(team?.name); return teamLogoKeys.find(candidate => key.includes(candidate)) || ""; };
+  const AVATAR_FILES = ["01-hood.png", "02-raptor.png", "03-trooper.png", "04-oni.png", "05-wolf.png", "06-skull.png", "07-fox.png", "08-phoenix.png"];
+  const avatarLabel = file => file.replace(/\.png$/i, "").replace(/^\d+-/, "").replace(/-/g, " ");
+  // Role abbreviation for the small corner badge — the role must actually read.
+  const ROLE_ABBREV = { igl: "IGL", leader: "IGL", shotcaller: "IGL", support: "SUP", supporter: "SUP", rusher: "RSH", assaulter: "ATK", entry: "ATK", initiator: "INI", flex: "FLX", duelist: "DUE", controller: "CTL", bomber: "BMB", sniper: "SNP", lurker: "LRK" };
+  const roleAbbrev = role => {
+    const key = normalizeKey(role);
+    if (ROLE_ABBREV[key]) return ROLE_ABBREV[key];
+    const hit = Object.keys(ROLE_ABBREV).find(candidate => key.includes(candidate));
+    if (hit) return ROLE_ABBREV[hit];
+    return String(role || "").trim().slice(0, 3).toUpperCase() || "?";
+  };
+  const roleTint = role => {
+    const key = normalizeKey(role);
+    if (key.includes("igl") || key.includes("lead") || key.includes("shotcaller")) return "#f0b429";
+    if (key.includes("support")) return "#2fb37f";
+    if (key.includes("assault") || key.includes("rush") || key.includes("entry") || key.includes("duel") || key.includes("bomb")) return "#ef5f6b";
+    if (key.includes("initiat") || key.includes("control") || key.includes("flex")) return "#4aa8ff";
+    if (key.includes("snipe") || key.includes("lurk")) return "#b06cff";
+    return "#8b6cff";
+  };
   const playerAvatar = player => {
     const name = player?.name || player?.ign || "Player";
+    const art = String(player?.avatar || "").trim();
+    const hasArt = AVATAR_FILES.includes(art);
     let hash = 0;
     for (const character of name) hash = (hash * 31 + character.charCodeAt(0)) >>> 0;
     const [from, to] = avatarPalettes[hash % avatarPalettes.length];
-    return `<span class="admin-player-avatar" style="--avatar-from:${from};--avatar-to:${to}" aria-hidden="true">${escape(initials(name))}</span>`;
+    const visual = hasArt
+      ? `<img class="admin-player-avatar-art" src="/assets/players/${escape(art)}" alt="" loading="lazy" decoding="async" data-fallback="${escape(initials(name))}">`
+      : escape(initials(name));
+    const role = String(player?.role || "").trim();
+    const badge = role
+      ? `<span class="admin-avatar-role" style="--role-tint:${roleTint(role)}" title="${escape(role)}">${escape(roleAbbrev(role))}</span>`
+      : "";
+    return `<span class="admin-player-avatar${hasArt ? " has-art" : ""}" style="--avatar-from:${from};--avatar-to:${to}" aria-hidden="true">${visual}${badge}</span>`;
   };
   const teamLogoTile = team => {
     const key = teamLogoKey(team);
     if (!key) return `<span class="admin-team-logo admin-team-logo-fallback" aria-hidden="true">${escape(initials(team?.name || "Team"))}</span>`;
-    return `<span class="admin-team-logo"><img src="/assets/team-logos/${key}.png" alt="" loading="lazy" decoding="async"></span>`;
+    return `<span class="admin-team-logo"><img src="/assets/team-logos/${key}${key === "apex" ? ".jpg" : ".png"}" alt="" loading="lazy" decoding="async"></span>`;
   };
   function entityCell(entity, key, item) {
     if (entity === "players" && key === "name") return `<div class="admin-identity">${playerAvatar(item)}<span class="admin-identity-name">${escape(item[key] ?? "—")}</span></div>`;
@@ -134,10 +176,26 @@
     $("#dialog-error").textContent = "";
     $("#form-fields").innerHTML = config[entity].fields.map(field => {
       const value = record?.[field.key] ?? "";
-      const label = `<label for="field-${field.key}">${escape(field.label)}${field.required ? " *" : ""}</label>`;
+      const isAvatar = field.type === "avatar";
+      const label = isAvatar
+        ? `<span class="field-label">${escape(field.label)}${field.required ? " *" : ""}</span>`
+        : `<label for="field-${field.key}">${escape(field.label)}${field.required ? " *" : ""}</label>`;
       const attrs = `${field.required ? "required" : ""} ${field.min ? `min="${field.min}"` : ""} ${field.max ? `max="${field.max}"` : ""} ${field.step ? `step="${field.step}"` : ""}`;
       let input;
-      if (field.type === "select") input = `<select id="field-${field.key}" name="${field.key}" ${attrs}>${buildOptions(field, value)}</select>`;
+      if (isAvatar) {
+        // Tile picker: one radio always checked (current art, else "None"),
+        // so an edit without touching it re-submits the same value.
+        const raw = String(value ?? "");
+        const current = AVATAR_FILES.includes(raw) ? raw : "";
+        const tiles = [{ file: "", label: "No art" }, ...AVATAR_FILES.map(file => ({ file, label: avatarLabel(file) }))];
+        input = `<div class="avatar-picker" role="radiogroup" aria-label="${escape(field.label)}">${tiles.map(tile => {
+          const visual = tile.file
+            ? `<img src="/assets/players/${tile.file}" alt="" loading="lazy" decoding="async">`
+            : `<span class="avatar-tile-none" aria-hidden="true">✕</span>`;
+          return `<label class="avatar-tile"><input type="radio" name="${field.key}" value="${escape(tile.file)}" ${tile.file === current ? "checked" : ""}>${visual}<span class="avatar-tile-label">${escape(tile.label)}</span></label>`;
+        }).join("")}</div>`;
+      }
+      else if (field.type === "select") input = `<select id="field-${field.key}" name="${field.key}" ${attrs}>${buildOptions(field, value)}</select>`;
       else if (field.type === "textarea") input = `<textarea id="field-${field.key}" name="${field.key}" maxlength="240" ${attrs}>${escape(value)}</textarea>`;
       else input = `<input id="field-${field.key}" name="${field.key}" type="${field.type || "text"}" value="${escape(value)}" placeholder="${escape(field.placeholder || "")}" maxlength="240" ${attrs}>`;
       return `<div class="field ${field.wide ? "field-wide" : ""}">${label}${input}</div>`;

@@ -1,0 +1,40 @@
+/* Raptor hero poster typography
+   ------------------------------------------------------------------
+   Mirrors the condensed horror-poster type system of the reference
+   image: an ultra-condensed black grotesque (Anton) for the giant
+   stacked headline, and a condensed bold caps face (Oswald) for the
+   eyebrow, mantra, tagline, stats and buttons. Open-license (OFL)
+   woff2s served locally (CSP: same-origin only). Sizes, spacing and
+   copy are scoped to the hero section only — every other section and
+   page keeps today's type. Body copy intentionally keeps the site's
+   existing sans (the poster's body is a neutral print sans too).
+   ------------------------------------------------------------------ */
+
+@font-face{font-family:"Anton";src:url("/assets/fonts/anton-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Oswald";src:url("/assets/fonts/oswald-600.woff2") format("woff2");font-weight:500 600;font-style:normal;font-display:swap}
+@font-face{font-family:"Oswald";src:url("/assets/fonts/oswald-700.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+
+/* the poster headline: giant, stacked, nearly touching */
+#home.hero h1{font-family:"Anton",Impact,"Arial Narrow",system-ui,sans-serif;font-weight:400;font-size:clamp(58px,10vw,126px);line-height:.9;letter-spacing:-.01em;text-transform:uppercase;margin:24px 0 10px;text-shadow:0 6px 34px rgba(4,5,12,.55)}
+#home.hero h1 span{display:block;letter-spacing:0}
+
+/* eyebrow: wide-tracked condensed caps label */
+#home.hero .eyebrow{font-family:"Oswald",Impact,"Arial Narrow",system-ui,sans-serif;font-weight:600;font-size:12px;letter-spacing:.36em;text-transform:uppercase}
+
+/* Play / Compete / Grow: condensed caps strap */
+#home.hero .hero-mantra{font-family:"Oswald",Impact,"Arial Narrow",system-ui,sans-serif;font-weight:600;font-size:16px;letter-spacing:.1em;text-transform:uppercase;gap:14px}
+
+/* buttons: quiet condensed caps to match the strap lines */
+#home.hero .hero-buttons .button{font-family:"Oswald",Impact,"Arial Narrow",system-ui,sans-serif;font-weight:600;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
+
+/* stats: Anton numerals, tracked Oswald wordmarks */
+#home.hero .stats-strip strong{font-family:"Anton",Impact,"Arial Narrow",system-ui,sans-serif;font-weight:400;font-size:36px;letter-spacing:.02em}
+#home.hero .stats-strip span{font-family:"Oswald",Impact,"Arial Narrow",system-ui,sans-serif;font-weight:600;font-size:9px;letter-spacing:.3em;text-transform:uppercase}
+
+/* narrow screens: poster scale, same shapes */
+@media(max-width:700px){
+  #home.hero h1{font-size:clamp(46px,13vw,64px)}
+  #home.hero .eyebrow{font-size:10px;letter-spacing:.3em}
+  #home.hero .hero-mantra{font-size:13px;gap:10px}
+  #home.hero .stats-strip strong{font-size:26px}
+}
