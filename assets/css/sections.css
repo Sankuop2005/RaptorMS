@@ -422,13 +422,14 @@ html.sec-js #about.community-in .ab-copy > * { opacity: 1; transform: none; }
 /* 5. Dark footer (reference: 4-column grid)                           */
 /* ------------------------------------------------------------------ */
 .site-footer.sf {
+  display: block;
   padding: 60px 24px 30px;
   background: #060710;
   color: #cbd5e1;
   font-family: Inter, system-ui, sans-serif;
   border-top: 1px solid rgba(255, 255, 255, .08);
 }
-.site-footer .sf-inner { max-width: 1200px; margin: 0 auto; }
+.site-footer .sf-inner { max-width: 1200px; margin: 0 auto; display: block; }
 .site-footer .sf-grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr 1fr;
