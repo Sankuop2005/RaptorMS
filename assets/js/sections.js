@@ -27,6 +27,36 @@
     paint();
   }
 
+  /* ---- public nav scrollspy & click active management -------------- */
+  const navLinks = Array.from(document.querySelectorAll("#public-nav a[href^='#']"));
+  if (navLinks.length) {
+    const targets = navLinks.map(link => {
+      const id = link.getAttribute("href").slice(1);
+      return { link, el: document.getElementById(id) };
+    }).filter(item => item.el);
+
+    const updateActiveNav = () => {
+      const scrollPos = (window.scrollY || 0) + 140;
+      let current = targets[0]?.link;
+      for (const t of targets) {
+        if (t.el.offsetTop <= scrollPos) {
+          current = t.link;
+        }
+      }
+      navLinks.forEach(l => l.classList.toggle("active", l === current));
+    };
+
+    window.addEventListener("scroll", updateActiveNav, { passive: true });
+    updateActiveNav();
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", () => {
+        navLinks.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+      });
+    });
+  }
+
   /* ---- the two section clips: load near, play when visible -------- */
   const videos = Array.from(document.querySelectorAll("[data-bg-video]"));
   let refreshVideos = () => { };
