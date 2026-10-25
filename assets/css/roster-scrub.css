@@ -145,7 +145,7 @@
   letter-spacing: .02em;
 }
 #roster-scrub.rs-open .rs-heading { opacity: 1; transform: none; filter: blur(0); }
-#roster-scrub.rs-open .rs-heading.rs-compacted { opacity: .86; transform: scale(.28); }
+#roster-scrub.rs-open .rs-heading.rs-compacted { opacity: .86; transform: scale(.52); }
 
 .rs-kicker {
   display: block;
@@ -162,7 +162,7 @@
   font-weight: 400;
   display: block;
   margin: 14px 0 0;
-  font-size: clamp(48px, 7vw, 108px); /* the Valorant face is tall and condensed — it can carry more point */
+  font-size: min(5.4vw, 82px); /* measured: the face runs ~6.3px width per 1px font — this keeps the glyph run clear of the suit figure (its head zone sits at ~51% of frame width) */
   line-height: .95;
   text-transform: uppercase;
   background: linear-gradient(101deg, #FDDAFE 6%, #EB84F9 38%, #AE48ED 66%, #792ACF 96%);
@@ -537,8 +537,8 @@
 
 @media (max-width: 860px) {
   #roster-scrub { --rs-scroll: 4.8; }
-  .rs-title { font-size: clamp(30px, 8.6vw, 46px); }
-  #roster-scrub.rs-open .rs-heading.rs-compacted { transform: scale(.34); }
+  .rs-title { font-size: clamp(19px, 6.5vw, 30px); }
+  #roster-scrub.rs-open .rs-heading.rs-compacted { transform: scale(.55); }
   .rs-copy { padding: calc(74px + 3vh) 20px calc(110px + env(safe-area-inset-bottom)); }
 
   /* identity travels with the copy flow, compact: centered badge stack */
