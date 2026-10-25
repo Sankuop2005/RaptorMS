@@ -21,6 +21,7 @@ env/
 API key.txt
 API key*.txt
 *.pem
+user_data.sh
 .env
 .env.*
 !.env.example
