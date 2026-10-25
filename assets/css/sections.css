@@ -227,9 +227,9 @@ html.sec-js .tournament-banner.tn-run .tn-track {
   background: radial-gradient(60% 80% at 50% 30%, rgba(235, 132, 249, .18), transparent 70%);
   pointer-events: none;
 }
-.tournament-mini--bgmi .tournament-figure { background: radial-gradient(closest-side, rgba(121, 42, 207, .62), rgba(16, 10, 34, .92)); }
-.tournament-mini--freefire .tournament-figure { background: radial-gradient(closest-side, rgba(255, 157, 69, .5), rgba(26, 14, 10, .92)); }
-.tournament-mini--valorant .tournament-figure { background: radial-gradient(closest-side, rgba(99, 212, 255, .5), rgba(10, 18, 34, .92)); }
+.tournament-mini--bgmi .tournament-figure { background: url('/assets/tournaments/bgmi.jpg') center / cover no-repeat; }
+.tournament-mini--freefire .tournament-figure { background: url('/assets/tournaments/freefire.jpg') center / cover no-repeat; }
+.tournament-mini--valorant .tournament-figure { background: url('/assets/tournaments/valorant.jpg') center / cover no-repeat; }
 .tourney-mark {
   position: relative;
   z-index: 1;
