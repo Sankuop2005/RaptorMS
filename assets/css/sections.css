@@ -42,9 +42,8 @@ main { padding-top: 84px; } /* the header leaves the flow — keep the hero exac
   border-color: rgba(255, 255, 255, .13);
   box-shadow: 0 14px 42px rgba(3, 0, 16, .5), inset 0 1px 0 rgba(255, 255, 255, .08);
 }
-/* keep nav text legible over the now-more-transparent glass */
-.site-header .brand,
-.site-header .public-nav a { text-shadow: 0 1px 10px rgba(3, 0, 16, .75); }
+/* header brand logo: crisp at 2x (PNG is 100x68) */
+.site-header .brand img { width: 50px; height: 34px; }
 .site-header .public-nav a.active { text-shadow: 0 1px 10px rgba(3, 0, 16, .75), 0 0 12px rgba(140, 93, 255, .4); }
 
 @media (max-width: 700px) {
@@ -417,64 +416,47 @@ html.sec-js #about.community-in .ab-copy > * { opacity: 1; transform: none; }
 }
 
 /* ------------------------------------------------------------------ */
-/* 5. Dark footer                                                       */
+/* 5. Dark footer (reference: 4-column grid)                           */
 /* ------------------------------------------------------------------ */
-.site-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 30px clamp(30px, 5vw, 70px);
-  padding: 44px clamp(22px, 6vw, 76px) 18px;
+.site-footer.sf {
+  padding: 60px 24px 30px;
   background: #060710;
+  color: #cbd5e1;
+  font-family: Inter, system-ui, sans-serif;
   border-top: 1px solid rgba(255, 255, 255, .08);
 }
-.foot-brand { display: grid; gap: 11px; }
-.foot-brand .brand { font-size: 15px; }
-.foot-brand .brand img { width: 36px; height: 34px; }
-.foot-brand p { margin: 0; max-width: 260px; font-size: 12px; line-height: 1.65; color: #8c8da0; }
-.foot-nav { display: flex; flex-wrap: wrap; gap: 8px 26px; font-size: 12px; padding-top: 7px; align-content: start; }
-.foot-nav a { color: #b9bac7; padding: 2px 0; position: relative; transition: color .2s ease; }
-.foot-nav a:hover { color: #fff; }
-.foot-side { display: grid; gap: 16px; justify-items: end; padding-top: 5px; }
-.foot-social { display: flex; gap: 9px; }
-.foot-social .social-icon {
-  width: 35px;
-  height: 35px;
-  border: 1px solid rgba(255, 255, 255, .13);
-  border-radius: 10px;
+.site-footer .sf-inner { max-width: 1200px; margin: 0 auto; }
+.site-footer .sf-grid {
   display: grid;
-  place-items: center;
-  color: #cdcdd8;
-  background: rgba(255, 255, 255, .045);
-  transition: color .2s ease, border-color .2s ease, transform .2s ease;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #1e293b;
 }
-.foot-social .social-icon:hover { color: #fff; border-color: rgba(199, 138, 255, .45); transform: translateY(-2px); }
-.foot-social .social-icon svg { width: 15px; height: 15px; display: block; }
-.foot-legal {
-  flex-basis: 100%;
+@media (max-width: 780px) { .site-footer .sf-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media (max-width: 480px) { .site-footer .sf-grid { grid-template-columns: 1fr; } }
+.site-footer .sf-brand .sf-logo {
+  font-weight: 700;
+  color: #fff;
+  font-size: 18px;
+  text-decoration: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  font-size: 11px;
-  color: #828393;
-  border-top: 1px solid rgba(255, 255, 255, .07);
-  margin-top: 8px;
-  padding-top: 16px;
+  gap: 8px;
 }
-.foot-legal a { color: #a2a3b2; transition: color .2s ease; }
-.foot-legal a:hover { color: #fff; }
-
-@media (max-width: 700px) {
-  .site-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px;
-    padding: 36px 22px 16px;
-  }
-  .foot-legal { align-items: baseline; }
-}
+.site-footer .sf-brand .sf-logo img { width: 50px; height: 34px; object-fit: contain; }
+.site-footer .sf-brand .sf-logo small { display: block; font-size: 6px; letter-spacing: .62em; text-align: center; margin-top: 4px; font-weight: 600; color: #c6c7d1; }
+.site-footer .sf-brand p { margin: 14px 0 18px; font-size: 14px; line-height: 1.6; max-width: 280px; color: #94a3b8; }
+.site-footer .sf-social { display: flex; gap: 10px; }
+.site-footer .sf-social a { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #1e293b; color: #cbd5e1; text-decoration: none; font-weight: 600; transition: background .2s ease; }
+.site-footer .sf-social a:hover { background: #334155; color: #fff; }
+.site-footer .sf-social .social-icon svg { width: 16px; height: 16px; display: block; }
+.site-footer .sf-grid h3 { margin: 0 0 14px; font-size: 13px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+.site-footer .sf-grid a { display: block; padding: 5px 0; font-size: 14px; color: #cbd5e1; text-decoration: none; }
+.site-footer .sf-grid a:hover { color: #fff; }
+.site-footer .sf-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; font-size: 13px; color: #94a3b8; flex-wrap: wrap; gap: 12px; }
+.site-footer .sf-bottom a { color: #94a3b8; text-decoration: none; margin-left: 18px; }
+.site-footer .sf-bottom a:hover { color: #cbd5e1; }
 
 /* ------------------------------------------------------------------ */
 /* 6. Reduced motion: no continuous marquee, no playback-independent   */
