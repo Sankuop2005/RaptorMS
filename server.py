@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import os
 import re
 import secrets
 import sqlite3
@@ -678,7 +679,8 @@ class PortalHandler(BaseHTTPRequestHandler):
 
 def main():
     db.initialize()
-    host, port = "127.0.0.1", 5050
+    host = os.environ.get("HOST", "127.0.0.1")
+    port = int(os.environ.get("PORT", "5050"))
     print(f"Raptor Esports portal running at http://{host}:{port}")
     print("Local demo accounts use Raptor@2026 (override with RAPTOR_DEMO_PASSWORD).")
     ThreadingHTTPServer((host, port), PortalHandler).serve_forever()
