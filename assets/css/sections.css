@@ -1,0 +1,329 @@
+/* Landing-page upgrade: glass header, video-backed tournament & CTA
+   sections, right-to-left tournament card rail, dark footer.
+   ------------------------------------------------------------------
+   Loaded AFTER styles.css / roster-background.css / roster-scrub.css,
+   so every rule here wins same-specificity ties by cascade order.
+   Everything is scoped to the landing page's unique hooks
+   (.site-header, #tournaments, #about, .site-footer) — login and
+   dashboard pages never load this file.
+
+   No JS at all? html never gets .sec-js, so every entrance-hidden
+   state (cards, copy) stays fully visible.
+   ------------------------------------------------------------------ */
+
+html { scroll-padding-top: 104px; } /* fixed chip must never cover anchored sections */
+main { padding-top: 84px; } /* the header leaves the flow — keep the hero exactly where it was */
+
+/* ------------------------------------------------------------------ */
+/* 1. Liquid-glass header — Apple-style floating chip                   */
+/* ------------------------------------------------------------------ */
+.site-header {
+  position: fixed;
+  top: 14px;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: min(1560px, calc(100% - 28px));
+  max-width: 1560px;
+  height: 64px;
+  padding: 0 clamp(16px, 3vw, 44px);
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-bottom-color: rgba(255, 255, 255, .09);
+  border-radius: 18px;
+  background: linear-gradient(115deg, rgba(19, 13, 36, .5), rgba(9, 7, 19, .58) 55%, rgba(14, 10, 30, .5));
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: 0 10px 34px rgba(3, 0, 16, .5), inset 0 1px 0 rgba(255, 255, 255, .07);
+  transition: background .4s ease, box-shadow .4s ease, border-color .4s ease;
+  z-index: 70;
+}
+.site-header.is-scrolled {
+  background: linear-gradient(115deg, rgba(17, 12, 33, .82), rgba(9, 6, 18, .9));
+  border-color: rgba(255, 255, 255, .13);
+  box-shadow: 0 14px 42px rgba(3, 0, 16, .68), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+/* the active underline hugged the old 84px bar's bottom edge — re-tune for the chip */
+.public-nav a.active:after { bottom: -14px; }
+
+@media (max-width: 700px) {
+  html { scroll-padding-top: 84px; }
+  main { padding-top: 76px; }
+  .site-header {
+    top: 8px;
+    width: calc(100% - 16px);
+    height: 60px;
+    padding: 0 14px;
+    border-radius: 15px;
+  }
+  /* the old absolute drop (top:67px) hung from an in-flow bar — the
+     floating chip needs its own detached, glassier panel */
+  .public-nav {
+    position: fixed;
+    top: 76px;
+    left: 8px;
+    right: 8px;
+    background: rgba(11, 8, 23, .93);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 14px;
+    padding: 6px 16px 12px;
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    box-shadow: 0 18px 44px rgba(3, 0, 16, .6);
+    z-index: 60;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Shared media plumbing for both video-backed sections              */
+/*    (section owns position:relative + isolation:isolate + the         */
+/*    ::before poster already — see roster-background.css)              */
+/* ------------------------------------------------------------------ */
+.tn-video, .ab-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  filter: saturate(1.06);
+  opacity: 0;
+  transition: opacity 1.1s ease;
+}
+.tn-video.is-live, .ab-video.is-live { opacity: 1; }
+.tn-video.is-failed, .ab-video.is-failed { display: none; } /* reveal the ::before poster */
+
+/* watermark corner — same curved-feather recipe as .hero-wm / .rs-wm:
+   the supplied clips carry a ✦ stamp in their lower-right corner */
+.media-wm {
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: clamp(200px, 26vw, 430px);
+  height: clamp(120px, 22vh, 240px);
+  border-top-left-radius: 100% 100%;
+  backdrop-filter: blur(18px) saturate(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.05);
+  background: radial-gradient(125% 125% at 100% 100%, rgba(7, 8, 16, .7) 26%, rgba(7, 8, 16, .34) 52%, rgba(7, 8, 16, 0) 74%);
+  -webkit-mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 68%);
+  mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 68%);
+  z-index: 2;
+}
+
+/* content above all media layers */
+#tournaments .tournament-head,
+#tournaments .upcoming-preview,
+#about .community-mark,
+#about .ab-copy { position: relative; z-index: 2; }
+
+/* ------------------------------------------------------------------ */
+/* 3. NEXT UP — video background + stable head + card rail              */
+/* ------------------------------------------------------------------ */
+#tournaments {
+  --tpad: max(clamp(22px, 6vw, 76px), calc((100% - 1228px) / 2));
+  padding: 58px var(--tpad) 62px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  align-items: start;
+  gap: 30px;
+  border-block: 1px solid rgba(255, 255, 255, .08);
+}
+/* layered gradients ride ABOVE the video: keeps the head copy and the
+   card rail readable everywhere, preserves the character's face */
+#tournaments::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    linear-gradient(90deg, rgba(7, 8, 18, .6), rgba(8, 9, 20, .18) 46%, rgba(8, 9, 20, .1) 66%, rgba(7, 8, 18, .34)),
+    linear-gradient(0deg, rgba(8, 10, 19, .78), rgba(8, 10, 19, .12) 46%, rgba(8, 10, 19, .38));
+}
+.tournament-head { max-width: 560px; }
+.tournament-banner p { max-width: 460px; }
+
+/* entrance: gated on .sec-js so a script-less load is never blank */
+html.sec-js .tn-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .8s ease .1s, transform .8s cubic-bezier(.16, .84, .28, 1) .1s;
+}
+html.sec-js .tournament-banner.tn-in .tn-reveal { opacity: 1; transform: none; }
+
+/* the rail: bleeds past the section padding to the screen edges,
+   with feathered masks so cards glide out of frame rather than clip */
+.upcoming-preview {
+  overflow: hidden;
+  margin-inline: calc(-1 * var(--tpad));
+  padding-top: 6px;
+  padding-bottom: 10px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 110px, #000 calc(100% - 110px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 110px, #000 calc(100% - 110px), transparent 100%);
+}
+.tn-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .8s ease .25s, transform .8s cubic-bezier(.16, .84, .28, 1) .25s;
+}
+html.sec-js .tournament-banner.tn-in .tn-track { opacity: 1; transform: translateY(0); }
+html.sec-js .tournament-banner.tn-run .tn-track {
+  animation: tn-marquee var(--tn-speed, 40s) linear infinite;
+}
+@keyframes tn-marquee {
+  to { transform: translateX(-50%); } /* exactly one group — the duplicate makes it seamless */
+}
+/* pause/slow surfaces: pointer hover, keyboard focus, finger down */
+.upcoming-preview:hover .tn-track,
+.upcoming-preview:focus-within .tn-track,
+.upcoming-preview.tn-touch .tn-track { animation-play-state: paused; }
+
+/* the card itself: glass plate over the footage */
+.tournament-mini {
+  flex: 0 0 min(320px, 76vw);
+  margin-right: 14px;
+  align-items: center;
+  gap: 14px;
+  display: flex;
+  border: 1px solid rgba(255, 255, 255, .11);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: linear-gradient(120deg, rgba(26, 18, 48, .66), rgba(11, 8, 23, .58));
+  backdrop-filter: blur(9px) saturate(140%);
+  -webkit-backdrop-filter: blur(9px) saturate(140%);
+  box-shadow: 0 14px 34px rgba(3, 0, 16, .38), inset 0 1px 0 rgba(255, 255, 255, .05);
+  transition: border-color .25s ease, transform .25s ease;
+}
+.tournament-mini:hover { border-color: rgba(199, 138, 255, .4); transform: translateY(-3px); }
+.tourney-mark {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 11px;
+  background: radial-gradient(80% 80% at 50% 30%, rgba(174, 72, 237, .38), rgba(46, 32, 72, .8));
+  color: #d9b8ff;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 6px 16px rgba(3, 0, 16, .4);
+}
+.tournament-mini > span:nth-child(2) { display: grid; gap: 3px; flex: 1; }
+.tournament-mini small { color: #b0a6d6; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+.tournament-mini b { font-size: 15px; line-height: 1.25; }
+.tournament-mini strong { font-size: 16px; color: #ede0ff; white-space: nowrap; letter-spacing: .01em; }
+
+@media (max-width: 700px) {
+  #tournaments { padding: 42px 18px 48px; gap: 24px; }
+  .upcoming-preview {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. MORE THAN JUST A GAME — independent video + restrained reveal     */
+/* ------------------------------------------------------------------ */
+html.sec-js #about .community-mark {
+  opacity: 0;
+  transform: translateY(20px) scale(.985);
+  transition: opacity .75s ease, transform .75s cubic-bezier(.16, .84, .28, 1);
+}
+html.sec-js #about .ab-copy > * {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity .7s ease, transform .7s cubic-bezier(.16, .84, .28, 1);
+}
+html.sec-js #about .ab-copy > *:nth-child(1) { transition-delay: .08s; }
+html.sec-js #about .ab-copy > *:nth-child(2) { transition-delay: .17s; }
+html.sec-js #about .ab-copy > *:nth-child(3) { transition-delay: .27s; }
+html.sec-js #about .ab-copy > *:nth-child(4) { transition-delay: .37s; }
+html.sec-js #about.community-in .community-mark { opacity: 1; transform: none; }
+html.sec-js #about.community-in .ab-copy > * { opacity: 1; transform: none; }
+
+/* ------------------------------------------------------------------ */
+/* 5. Dark footer                                                       */
+/* ------------------------------------------------------------------ */
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 30px clamp(30px, 5vw, 70px);
+  padding: 44px clamp(22px, 6vw, 76px) 18px;
+  background: #060710;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+.foot-brand { display: grid; gap: 11px; }
+.foot-brand .brand { font-size: 15px; }
+.foot-brand .brand img { width: 36px; height: 34px; }
+.foot-brand p { margin: 0; max-width: 260px; font-size: 12px; line-height: 1.65; color: #8c8da0; }
+.foot-nav { display: flex; flex-wrap: wrap; gap: 8px 26px; font-size: 12px; padding-top: 7px; align-content: start; }
+.foot-nav a { color: #b9bac7; padding: 2px 0; position: relative; transition: color .2s ease; }
+.foot-nav a:hover { color: #fff; }
+.foot-side { display: grid; gap: 16px; justify-items: end; padding-top: 5px; }
+.foot-social { display: flex; gap: 9px; }
+.foot-social .social-icon {
+  width: 35px;
+  height: 35px;
+  border: 1px solid rgba(255, 255, 255, .13);
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #cdcdd8;
+  background: rgba(255, 255, 255, .045);
+  transition: color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.foot-social .social-icon:hover { color: #fff; border-color: rgba(199, 138, 255, .45); transform: translateY(-2px); }
+.foot-social .social-icon svg { width: 15px; height: 15px; display: block; }
+.foot-legal {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  font-size: 11px;
+  color: #828393;
+  border-top: 1px solid rgba(255, 255, 255, .07);
+  margin-top: 8px;
+  padding-top: 16px;
+}
+.foot-legal a { color: #a2a3b2; transition: color .2s ease; }
+.foot-legal a:hover { color: #fff; }
+
+@media (max-width: 700px) {
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 36px 22px 16px;
+  }
+  .foot-legal { align-items: baseline; }
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Reduced motion: no continuous marquee, no playback-independent   */
+/*    entrances; the ::before poster stills carry both sections        */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html.sec-js .tn-reveal,
+  html.sec-js .tn-track,
+  html.sec-js #about .community-mark,
+  html.sec-js #about .ab-copy > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  html.sec-js .tournament-banner.tn-run .tn-track { animation: none !important; }
+  .upcoming-preview { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .upcoming-preview::-webkit-scrollbar { display: none; }
+  .upcoming-preview .tn-clone { display: none; }
+  .tournament-mini:hover { transform: none; }
+  /* videos keep the poster visible without any movement — the tube is
+     never started by sections.js, so no opacity fade occurs either */
+}
