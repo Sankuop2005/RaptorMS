@@ -471,16 +471,16 @@ html.sec-js #about.community-in .ab-copy > * { opacity: 1; transform: none; }
 .site-footer .sf-brand .sf-logo small { display: block; font-size: 6px; letter-spacing: .62em; text-align: center; margin-top: 4px; font-weight: 600; color: #c6c7d1; }
 .site-footer .sf-brand p { margin: 14px 0 18px; font-size: 14px; line-height: 1.6; max-width: 280px; color: #94a3b8; }
 .site-footer .sf-social { display: flex; gap: 10px; }
-.site-footer .sf-social a { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #1e293b; color: #cbd5e1; text-decoration: none; font-weight: 600; transition: background .2s ease; }
+.site-footer .sf-social a { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #1e293b; color: #cbd5e1; text-decoration: none; font-weight: 600; transition: background .2s ease; padding: 0; }
 .site-footer .sf-social a:hover { background: #334155; color: #fff; }
 .site-footer .sf-social .social-icon svg { width: 18px; height: 18px; display: block; fill: currentColor; }
 .site-footer .sf-grid h3 { margin: 0 0 14px; font-size: 13px; font-weight: 700; color: #fff; letter-spacing: .5px; }
-.site-footer .sf-grid a { display: block; padding: 5px 0; font-size: 14px; color: #cbd5e1; text-decoration: none; }
-.site-footer .sf-grid a:hover { color: #fff; }
+.site-footer .sf-grid > div > a { display: block; padding: 5px 0; font-size: 14px; color: #cbd5e1; text-decoration: none; }
+.site-footer .sf-grid > div > a:hover { color: #fff; }
 .site-footer .sf-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; font-size: 13px; color: #a6b1c2; flex-wrap: wrap; gap: 12px; }
 .site-footer .sf-bottom a { color: #a6b1c2; text-decoration: none; margin-left: 18px; }
 .site-footer .sf-bottom a:hover { color: #e2e8f0; }
-.site-footer .sf-grid a { color: #cdd6e2; }
+.site-footer .sf-grid > div > a { color: #cdd6e2; }
 .site-footer .sf-brand p { color: #9aa7ba; }
 
 /* ------------------------------------------------------------------ */
