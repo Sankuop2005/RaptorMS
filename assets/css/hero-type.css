@@ -37,4 +37,7 @@
   #home.hero .eyebrow{font-size:10px;letter-spacing:.3em}
   #home.hero .hero-mantra{font-size:13px;gap:10px}
   #home.hero .stats-strip strong{font-size:26px}
+  #home.hero .stats-strip span{font-size:8.5px;letter-spacing:.22em}
+  #home.hero .hero-buttons{flex-wrap:wrap}
+  #home.hero .hero-buttons .button{flex:1 1 auto;white-space:nowrap;justify-content:center}
 }

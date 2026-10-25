@@ -262,6 +262,38 @@ html.sec-js .tournament-banner.tn-run .tn-track {
   backdrop-filter: blur(6px);
   z-index: 1;
 }
+.tourney-live {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  color: #ffd9df;
+  background: rgba(140, 12, 32, .72);
+  border: 1px solid rgba(255, 120, 140, .45);
+  border-radius: 999px;
+  padding: 4px 10px 4px 8px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 18px rgba(140, 12, 32, .5);
+  z-index: 1;
+}
+.tourney-live i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff4d67;
+  box-shadow: 0 0 10px #ff4d67;
+  animation: tourney-pulse 1.6s ease-in-out infinite;
+}
+@keyframes tourney-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .45; transform: scale(.72); }
+}
 .tournament-body {
   grid-column: 2;
   grid-row: 1;
@@ -454,13 +486,15 @@ html.sec-js #about.community-in .ab-copy > * { opacity: 1; transform: none; }
 .site-footer .sf-social { display: flex; gap: 10px; }
 .site-footer .sf-social a { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #1e293b; color: #cbd5e1; text-decoration: none; font-weight: 600; transition: background .2s ease; }
 .site-footer .sf-social a:hover { background: #334155; color: #fff; }
-.site-footer .sf-social .social-icon svg { width: 16px; height: 16px; display: block; }
+.site-footer .sf-social .social-icon svg { width: 16px; height: 16px; display: block; fill: currentColor; }
 .site-footer .sf-grid h3 { margin: 0 0 14px; font-size: 13px; font-weight: 700; color: #fff; letter-spacing: .5px; }
 .site-footer .sf-grid a { display: block; padding: 5px 0; font-size: 14px; color: #cbd5e1; text-decoration: none; }
 .site-footer .sf-grid a:hover { color: #fff; }
-.site-footer .sf-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; font-size: 13px; color: #94a3b8; flex-wrap: wrap; gap: 12px; }
-.site-footer .sf-bottom a { color: #94a3b8; text-decoration: none; margin-left: 18px; }
-.site-footer .sf-bottom a:hover { color: #cbd5e1; }
+.site-footer .sf-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; font-size: 13px; color: #a6b1c2; flex-wrap: wrap; gap: 12px; }
+.site-footer .sf-bottom a { color: #a6b1c2; text-decoration: none; margin-left: 18px; }
+.site-footer .sf-bottom a:hover { color: #e2e8f0; }
+.site-footer .sf-grid a { color: #cdd6e2; }
+.site-footer .sf-brand p { color: #9aa7ba; }
 
 /* ------------------------------------------------------------------ */
 /* 6. Reduced motion: no continuous marquee, no playback-independent   */

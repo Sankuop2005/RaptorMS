@@ -55,6 +55,12 @@ class PortalHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         print("[%s] %s" % (self.log_date_time_string(), fmt % args))
 
+    def handle_one_request(self):
+        try:
+            super().handle_one_request()
+        except (ConnectionAbortedError, ConnectionResetError, BrokenPipeError):
+            self.close_connection = True  # viewer navigated away mid-response; not an error
+
     def read_json(self) -> dict:
         try:
             size = int(self.headers.get("Content-Length", "0"))

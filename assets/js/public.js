@@ -31,13 +31,16 @@
     if (tournaments) tournaments.innerHTML = data.tournaments.map(t => {
       const date = new Date(t.date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
       const key = String(t.game || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const live = String(t.status || "").toLowerCase() === "ongoing";
+      const where = String(t.location || "").trim();
+      const meta = [live ? "Ongoing" : String(t.status || "Upcoming").trim(), where].filter(Boolean).join(" · ");
       return `<article class="tournament-mini tournament-mini--${key}">
-        <figure class="tournament-figure"><span class="tourney-mark">✧</span><span class="tourney-date">${safe(date)}</span></figure>
+        <figure class="tournament-figure">${live ? '<span class="tourney-live"><i></i>LIVE</span>' : ""}<span class="tourney-mark">✧</span><span class="tourney-date">${safe(date)}</span></figure>
         <div class="tournament-body">
           <div class="tournament-content">
             <span class="tourney-game">${safe(t.game)}</span>
             <h3 class="tourney-name">${safe(t.name)}</h3>
-            <p class="tourney-desc">Follow our squads through the season and catch the next big moment.</p>
+            <p class="tourney-desc">${safe(meta)}</p>
           </div>
           <footer class="tournament-footer">
             <div class="tournament-detail"><span class="detail-label">Prize</span><p class="tourney-prize">${money(t.prize_pool)}</p></div>

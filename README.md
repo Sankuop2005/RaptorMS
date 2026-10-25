@@ -15,7 +15,7 @@ From this folder, run:
 python server.py
 ```
 
-Then open [http://127.0.0.1:5000](http://127.0.0.1:5000). The server listens on localhost only.
+Then open [http://127.0.0.1:5050](http://127.0.0.1:5050). The server listens on localhost only.
 
 ## Raptor AI Assistant
 
