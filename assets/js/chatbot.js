@@ -22,12 +22,12 @@
   root.className = "raptor-chat";
   root.innerHTML = `
     <button type="button" class="raptor-chat-launcher" aria-expanded="false" aria-controls="raptor-chat-panel" aria-label="Open Raptor AI Assistant">
-      <span class="raptor-chat-mark" aria-hidden="true">✦</span>
+      <img class="raptor-chat-mark" src="/assets/raptor-eagle-mark.png" alt="" aria-hidden="true">
       <span class="raptor-chat-launcher-copy">Raptor AI<small>Assistant</small></span>
     </button>
     <section id="raptor-chat-panel" class="raptor-chat-panel" role="dialog" aria-modal="false" aria-labelledby="raptor-chat-title" aria-hidden="true" inert>
       <header class="raptor-chat-header">
-        <span class="raptor-chat-mark" aria-hidden="true">✦</span>
+        <img class="raptor-chat-mark" src="/assets/raptor-eagle-mark.png" alt="" aria-hidden="true">
         <div class="raptor-chat-heading">
           <h2 class="raptor-chat-title" id="raptor-chat-title">Raptor AI Assistant</h2>
           <div class="raptor-chat-subtitle"><span class="raptor-chat-dot" data-status-dot></span><span data-status>Connecting…</span></div>
@@ -337,10 +337,11 @@
     const row = document.createElement("div");
     row.className = `raptor-chat-row ${message.role === "user" ? "user" : "assistant"}`;
     if (message.role !== "user") {
-      const mark = document.createElement("span");
+      const mark = document.createElement("img");
       mark.className = "raptor-chat-mark";
       mark.setAttribute("aria-hidden", "true");
-      mark.textContent = "✦";
+      mark.src = "/assets/raptor-eagle-mark.png";
+      mark.alt = "";
       row.append(mark);
     }
     const bubble = document.createElement("div");
@@ -366,10 +367,11 @@
     if (state.typing) {
       const row = document.createElement("div");
       row.className = "raptor-chat-row assistant";
-      const mark = document.createElement("span");
+      const mark = document.createElement("img");
       mark.className = "raptor-chat-mark";
       mark.setAttribute("aria-hidden", "true");
-      mark.textContent = "✦";
+      mark.src = "/assets/raptor-eagle-mark.png";
+      mark.alt = "";
       const bubble = document.createElement("div");
       bubble.className = "raptor-chat-bubble";
       bubble.setAttribute("aria-label", "Raptor AI is typing");
