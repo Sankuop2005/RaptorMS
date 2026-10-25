@@ -1,4 +1,38 @@
+/* "Team Vitality" — the tall condensed lettering alias (from Valorant Font.ttf). */
+@font-face {
+  font-family: "Team Vitality";
+  src: url("/assets/fonts/Valorant%20Font.ttf") format("truetype");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+/* "Sayonara" — the Saira Stencil One face alias for data values. */
+@font-face {
+  font-family: "Sayonara";
+  src: url("/assets/fonts/saira-stencil-one-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 /* Editorial dashboard theme — loaded only by admin.html */
+
+/* "Raptor Valorant" — the tall condensed display face (same as public site). */
+@font-face {
+  font-family: "Raptor Valorant";
+  src: url("/assets/fonts/Valorant%20Font.ttf") format("truetype");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+/* "Raptor Stencil" — the Saira Stencil One face for data values. */
+@font-face {
+  font-family: "Raptor Stencil";
+  src: url("/assets/fonts/saira-stencil-one-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: "General Sans";
   src: url("/assets/fonts/general-sans-400.woff2") format("woff2");
@@ -43,35 +77,37 @@
 }
 
 .admin-body {
-  --adm-bg: #fafafa;
-  --adm-surface: #ffffff;
-  --adm-surface-alt: #f4f4f5;
-  --adm-text: #0a0a0a;
-  --adm-secondary: #6b6b6b;
-  --adm-muted: #9c9c9c;
-  --adm-border: #e8e8ec;
-  --adm-border-strong: #d4d4d8;
+  --adm-bg: #0f111a;
+  --adm-surface: #171a26;
+  --adm-surface-alt: #202434;
+  --adm-text: #f0f0f0;
+  --adm-secondary: #a0a0a0;
+  --adm-muted: #707070;
+  --adm-border: #282d3e;
+  --adm-border-strong: #383f56;
   --adm-primary: #6366f1;
-  --adm-primary-strong: #4f46e5;
-  --adm-primary-hover: #4338ca;
-  --adm-primary-soft: #eef2ff;
+  --adm-primary-strong: #7c6cff;
+  --adm-primary-hover: #6358e8;
+  --adm-primary-soft: rgba(99, 102, 241, 0.12);
   --adm-success: #10b981;
-  --adm-success-text: #047857;
-  --adm-success-soft: #ecfdf5;
+  --adm-success-text: #34d399;
+  --adm-success-soft: rgba(16, 185, 129, 0.12);
   --adm-warning: #f59e0b;
-  --adm-warning-text: #b45309;
-  --adm-warning-soft: #fffbeb;
+  --adm-warning-text: #fbbf24;
+  --adm-warning-soft: rgba(245, 158, 11, 0.12);
   --adm-error: #ef4444;
-  --adm-error-text: #b91c1c;
-  --adm-error-soft: #fef2f2;
-  --adm-info-text: #1d4ed8;
-  --adm-info-soft: #eff6ff;
+  --adm-error-text: #f87171;
+  --adm-error-soft: rgba(239, 68, 68, 0.1);
+  --adm-info-text: #60a5fa;
+  --adm-info-soft: rgba(59, 130, 246, 0.12);
+  --adm-yellow: #FFD84D;
   --adm-sidebar-bg: #0d1020;
   --adm-sidebar-bg-deep: #090b14;
   --adm-sidebar-text: #f4f2ff;
   --adm-sidebar-muted: #a6aac1;
   --adm-sidebar-line: rgba(255, 255, 255, 0.08);
   --adm-sidebar-accent: #8c5dff;
+  --adm-yellow: #FFD84D;
   background: var(--adm-bg);
   color: var(--adm-text);
   font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -120,8 +156,8 @@
   outline-offset: 2px;
 }
 .admin-body ::selection {
-  background: #e0e7ff;
-  color: #0a0a0a;
+  background: rgba(99, 102, 241, 0.35);
+  color: #ffffff;
 }
 
 /* App shell */
@@ -285,7 +321,7 @@
   justify-content: space-between;
   height: 64px;
   padding: 0 clamp(20px, 3.4vw, 44px);
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(15, 17, 26, 0.88);
   border-bottom: 1px solid var(--adm-border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -360,7 +396,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--adm-text);
+  background: var(--adm-primary-strong);
   color: #ffffff;
   font-family: "General Sans", ui-sans-serif, system-ui, sans-serif;
   font-size: 12px;
@@ -515,7 +551,7 @@
   height: 42px;
   border-radius: 10px;
   background: var(--adm-surface-alt);
-  color: #52525b;
+  color: var(--adm-secondary);
   font-size: 0;
 }
 .admin-body .stat-icon .ui-icon {
@@ -575,7 +611,7 @@
   gap: 16px;
   margin-bottom: 6px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #f1f1f4;
+  border-bottom: 1px solid var(--adm-border);
 }
 .admin-body .card-heading h2,
 .admin-body .data-toolbar h2 {
@@ -614,7 +650,7 @@
   margin: 0 -12px;
   padding: 14px 12px;
   border: 0;
-  border-bottom: 1px solid #f1f1f4;
+  border-bottom: 1px solid var(--adm-border);
   border-radius: 8px;
   transition: background 0.15s ease;
 }
@@ -634,7 +670,7 @@
   height: 40px;
   border-radius: 8px;
   background: var(--adm-surface-alt);
-  color: #52525b;
+  color: var(--adm-secondary);
   font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   font-size: 11px;
   font-weight: 500;
@@ -674,14 +710,14 @@
   height: 36px;
   border-radius: 8px;
   background: var(--adm-surface-alt);
-  color: #52525b;
+  color: var(--adm-secondary);
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
 }
 .admin-body .activity-info p {
   margin: 0;
-  color: #3f3f46;
+  color: var(--adm-text);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -736,7 +772,7 @@
 }
 .admin-body .table-wrap {
   overflow-x: auto;
-  scrollbar-color: #d4d4d8 transparent;
+  scrollbar-color: #323244 transparent;
   scrollbar-width: thin;
 }
 .admin-body .table-wrap::-webkit-scrollbar {
@@ -744,7 +780,7 @@
 }
 .admin-body .table-wrap::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: #d4d4d8;
+  background: #323244;
 }
 .admin-body table {
   width: 100%;
@@ -754,21 +790,47 @@
 .admin-body th,
 .admin-body td {
   padding: 14px;
-  border-bottom: 1px solid #f1f1f4;
+  border-bottom: 1px solid var(--adm-border);
   font-size: 13px;
   text-align: left;
   white-space: nowrap;
 }
+.admin-body thead tr {
+  background: #1c202d;
+}
 .admin-body th {
-  background: var(--adm-bg);
-  color: var(--adm-secondary);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  background: #1c202d;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--adm-border);
+  text-align: left;
+  white-space: nowrap;
+  font-family: "Team Vitality", "Raptor Valorant", "Anton", Impact, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  background-image: linear-gradient(135deg, #FF4D4D 0%, #E0181B 55%, #A80E11 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: #E0181B !important;
+}
+.admin-body th span {
+  font-family: "Team Vitality", "Raptor Valorant", "Anton", Impact, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  background: linear-gradient(135deg, #FF4D4D 0%, #E0181B 55%, #A80E11 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: #E0181B !important;
+  display: inline-block;
+  line-height: 1.2;
 }
 .admin-body td {
-  color: #52525b;
+  color: var(--adm-secondary);
 }
 .admin-body td small {
   color: var(--adm-secondary);
@@ -778,7 +840,7 @@
   transition: background 0.15s ease;
 }
 .admin-body tbody tr:hover {
-  background: #fcfcfd;
+  background: var(--adm-surface-alt);
 }
 .admin-body tbody tr:last-child td {
   border-bottom: 0;
@@ -912,7 +974,7 @@
   height: 44px;
   flex-basis: 44px;
   border-color: var(--adm-border);
-  background: var(--adm-text);
+  background: var(--adm-surface-alt);
   box-shadow: none;
 }
 .admin-body .admin-team-logo-fallback {
@@ -956,7 +1018,7 @@
 .admin-body .status-inactive {
   border-color: var(--adm-border);
   background: var(--adm-surface-alt);
-  color: #52525b;
+  color: var(--adm-secondary);
 }
 .admin-body .status-ongoing {
   border-color: rgba(29, 78, 216, 0.12);
@@ -1050,7 +1112,7 @@
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background: var(--adm-text);
+  background: linear-gradient(135deg, #7c4dff, #a476ff);
   color: #ffffff;
   font-size: 0;
   box-shadow: none;
@@ -1100,7 +1162,7 @@
   border: 1px solid var(--adm-border);
   border-radius: 4px 12px 12px 12px;
   background: var(--adm-bg);
-  color: #3f3f46;
+  color: var(--adm-text);
   font-size: 14px;
   line-height: 1.6;
   white-space: pre-line;
@@ -1124,7 +1186,7 @@
   border: 1px solid var(--adm-border);
   border-radius: 999px;
   background: var(--adm-surface);
-  color: #52525b;
+  color: var(--adm-secondary);
   font-size: 12px;
   font-weight: 500;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
@@ -1188,7 +1250,7 @@
   justify-content: space-between;
   gap: 24px;
   padding: 20px 0;
-  border-bottom: 1px solid #f1f1f4;
+  border-bottom: 1px solid var(--adm-border);
   color: var(--adm-text);
   font-size: 14px;
 }
@@ -1371,7 +1433,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #3f3f46;
+  color: var(--adm-text);
   font-size: 13px;
   white-space: nowrap;
 }
@@ -1437,7 +1499,7 @@
 }
 .admin-body .user-table th:last-child {
   z-index: 2;
-  background: var(--adm-bg);
+  background: #1c202d !important;
 }
 
 /* The floating assistant uses the shared dark public widget theme. */
@@ -1467,11 +1529,11 @@
   }
   .admin-body .entity-table.has-actions th:last-child {
     z-index: 2;
-    background: var(--adm-bg);
+    background: #1c202d !important;
   }
   .admin-body .entity-table.has-actions tbody tr:hover td:last-child {
-    background: #fcfcfd;
-  }
+  background: var(--adm-surface-alt);
+}
 }
 @media (min-width: 621px) and (max-width: 1100px) {
   .admin-body .stat-grid-three {
@@ -1620,4 +1682,51 @@
   .admin-body .loading-state::before {
     animation-duration: 1.6s;
   }
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Accent styles: Team Vitality heading (gradient red) & Sayonara data (yellow) */
+/* ------------------------------------------------------------------ */
+.admin-body th,
+.admin-body th span,
+.admin-body .tourney-col-heading {
+  font-family: "Team Vitality", "Raptor Valorant", "Anton", Impact, sans-serif !important;
+  font-size: 13px !important;
+  letter-spacing: .14em !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  background: linear-gradient(135deg, #FF4D4D 0%, #E0181B 55%, #A80E11 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: #E0181B !important;
+}
+
+.admin-body td[data-col="game"],
+.admin-body td[data-col="date"],
+.admin-body td[data-col="prize_pool"],
+.admin-body .tourney-col-data,
+.admin-body .match-date[data-col="date"] {
+  font-family: "Sayonara", "Raptor Stencil", "Anton", Impact, sans-serif !important;
+  color: #FFD84D !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  letter-spacing: .04em !important;
+  text-shadow: 0 0 12px rgba(255, 216, 77, 0.35) !important;
+}
+
+.admin-body .tourney-tag[data-col="game"] {
+  display: inline-block;
+  font-family: "Sayonara", "Raptor Stencil", "Anton", Impact, sans-serif;
+  color: #FFD84D;
+  text-shadow: 0 0 10px rgba(255, 216, 77, 0.35);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: .05em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 216, 77, 0.1);
+  border: 1px solid rgba(255, 216, 77, 0.25);
+  margin-right: 6px;
 }
