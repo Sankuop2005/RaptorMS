@@ -1,11 +1,15 @@
 # Raptor Esports Portal
 
-[![CI Build](https://img.shields.io/badge/CI%20Build-passing-brightgreen.svg)](https://github.com/raptor-esports/portal/actions)
+[![Live Website](https://img.shields.io/badge/Live%20Website-d3r9ofiiy3r12n.cloudfront.net-blueviolet?style=for-the-badge&logo=amazon-aws)](https://d3r9ofiiy3r12n.cloudfront.net)
+
+[![CI Build](https://img.shields.io/badge/CI%20Build-passing-brightgreen.svg)](https://github.com/Sankuop2005/RaptorMS/actions)
 [![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT%202026-green.svg)](LICENSE)
 [![Database: SQLite 3](https://img.shields.io/badge/Database-SQLite%203-lightgrey.svg)](https://www.sqlite.org/)
 [![Dependencies: Zero External](https://img.shields.io/badge/Dependencies-Zero%20External-success.svg)](README.md)
 [![Test Suite](https://img.shields.io/badge/Tests-48%2F48%20Passing-brightgreen.svg)](tests/)
+
+> 🌐 **Live Website**: [https://d3r9ofiiy3r12n.cloudfront.net](https://d3r9ofiiy3r12n.cloudfront.net) (AWS CloudFront Global HTTPS)
 
 A modern, production-grade esports organization management portal and public showcase built exclusively with the **Python 3.10+ Standard Library** and browser-native HTML5, CSS3, and Vanilla JavaScript. The platform features an interactive public web showcase, a role-scoped management console, an enterprise-grade 5-role Role-Based Access Control (RBAC) engine, an ACID-compliant SQLite datastore, and a context-aware AI assistant gateway with dual-model failover.
 
