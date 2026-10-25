@@ -25,6 +25,7 @@ API key*.txt
 !.env.example
 
 # Agent and editor state
+.agents/
 .superpowers/
 .vscode/
 .idea/
