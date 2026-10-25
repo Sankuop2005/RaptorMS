@@ -185,18 +185,19 @@ html.sec-js .tournament-banner.tn-run .tn-track {
 .upcoming-preview:focus-within .tn-track,
 .upcoming-preview.tn-touch .tn-track { animation-play-state: paused; }
 
-/* the card itself: a self-contained journal plate over the footage */
+/* the card itself: a single horizontal plate over the footage */
 .tournament-mini {
   flex: 0 0 auto;
-  width: min(340px, 76vw);
+  width: min(460px, 82vw);
   min-width: 0;
   margin-right: 14px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  grid-template-rows: 1fr;
   border: 1px solid rgba(255, 255, 255, .12);
   border-radius: 16px;
   overflow: hidden;
-  background: linear-gradient(160deg, rgba(22, 16, 42, .78), rgba(9, 7, 19, .62));
+  background: linear-gradient(120deg, rgba(22, 16, 42, .78), rgba(9, 7, 19, .62));
   backdrop-filter: blur(10px) saturate(140%);
   -webkit-backdrop-filter: blur(10px) saturate(140%);
   box-shadow: 0 18px 40px rgba(3, 0, 16, .45), inset 0 1px 0 rgba(255, 255, 255, .06);
@@ -204,8 +205,10 @@ html.sec-js .tournament-banner.tn-run .tn-track {
 }
 .tournament-mini:hover { border-color: rgba(199, 138, 255, .45); transform: translateY(-4px); box-shadow: 0 22px 46px rgba(3, 0, 16, .55), inset 0 1px 0 rgba(255, 255, 255, .08); }
 .tournament-figure {
-  position: relative;
-  height: 190px;
+  grid-column: 1;
+  grid-row: 1;
+  width: 132px;
+  height: 100%;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -249,6 +252,13 @@ html.sec-js .tournament-banner.tn-run .tn-track {
   padding: 4px 10px;
   backdrop-filter: blur(6px);
   z-index: 1;
+}
+.tournament-body {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 .tournament-content {
   padding: 16px 18px 12px;
@@ -317,7 +327,7 @@ html.sec-js .tournament-banner.tn-run .tn-track {
   font-weight: 600;
   letter-spacing: .02em;
 }
-.tournament-detail p.tourney-prize { color: #FFD84D; text-shadow: 0 0 14px rgba(255, 216, 77, .3); }
+.tourney-prize { color: #FFD84D; text-shadow: 0 0 14px rgba(255, 216, 77, .3); }
 
 @media (max-width: 700px) {
   #tournaments { padding: 42px 18px 48px; gap: 24px; }

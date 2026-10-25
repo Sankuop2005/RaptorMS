@@ -33,16 +33,18 @@
       const key = String(t.game || "").toLowerCase().replace(/[^a-z0-9]/g, "");
       return `<article class="tournament-mini tournament-mini--${key}">
         <figure class="tournament-figure"><span class="tourney-mark">✧</span><span class="tourney-date">${safe(date)}</span></figure>
-        <div class="tournament-content">
-          <span class="tourney-game">${safe(t.game)}</span>
-          <h3 class="tourney-name">${safe(t.name)}</h3>
-          <p class="tourney-desc">Follow our squads through the season and catch the next big moment.</p>
+        <div class="tournament-body">
+          <div class="tournament-content">
+            <span class="tourney-game">${safe(t.game)}</span>
+            <h3 class="tourney-name">${safe(t.name)}</h3>
+            <p class="tourney-desc">Follow our squads through the season and catch the next big moment.</p>
+          </div>
+          <footer class="tournament-footer">
+            <div class="tournament-detail"><span class="detail-label">Prize</span><p class="tourney-prize">${money(t.prize_pool)}</p></div>
+            <div class="tournament-detail"><span class="detail-label">Date</span><p>${safe(date)}</p></div>
+            <div class="tournament-detail"><span class="detail-label">Game</span><p>${safe(t.game)}</p></div>
+          </footer>
         </div>
-        <footer class="tournament-footer">
-          <div class="tournament-detail"><span class="detail-label">Prize</span><p class="tourney-prize">${money(t.prize_pool)}</p></div>
-          <div class="tournament-detail"><span class="detail-label">Date</span><p>${safe(date)}</p></div>
-          <div class="tournament-detail"><span class="detail-label">Game</span><p>${safe(t.game)}</p></div>
-        </footer>
       </article>`;
     }).join("") || "<span>No tournaments announced yet.</span>";
   }).catch(() => { document.querySelectorAll("[data-stat]").forEach(el => el.textContent = "0"); const teams = document.querySelector("#public-teams"); if (teams) teams.innerHTML = `<div class="empty-public">Our team lineup will be here soon.</div>`; });
