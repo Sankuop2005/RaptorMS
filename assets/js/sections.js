@@ -88,7 +88,7 @@
     }
     refreshVideos();
   };
-  const scheduleTick = () => { if (!tickQueued) { tickQueued = true; requestAnimationFrame(tick); } };
+  const scheduleTick = () => { if (!tickQueued) { tickQueued = true; setTimeout(tick, 0); } };
   majorEvents.forEach(ev => window.addEventListener(ev, scheduleTick, { passive: true }));
   document.addEventListener("visibilitychange", scheduleTick);
   /* belt and braces: a slow geometry poll drives environments that

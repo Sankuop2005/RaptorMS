@@ -28,7 +28,23 @@
     const teams = document.querySelector("#public-teams"); /* null once the landing page's old roster grid is gone */
     if (teams) teams.innerHTML = data.teams.map((team, i) => `<a class="team-card" href="/teams/${safe(team.id)}" aria-label="View ${safe(team.name)} team details"><div class="team-symbol ${safe(team.accent)}${String(team.name || "").toLowerCase().includes("apex") ? " team-symbol-tag" : ""}">${teamEmblem(team, i)}</div><div class="team-card-main"><span class="eyebrow">${safe(team.game)}</span><h3>${safe(team.name)}</h3><p>${safe(team.description || "Ready for the next challenge.")}</p><div class="team-card-foot"><span>${team.players_count || 0} Players</span></div></div></a>`).join("") || `<div class="empty-public">Our next roster is in the making. Check back soon.</div>`;
     const tournaments = document.querySelector("#public-tournaments");
-    if (tournaments) tournaments.innerHTML = data.tournaments.map(t => `<article class="tournament-mini"><span class="tourney-mark">✧</span><span><small>${safe(t.game)} · ${new Date(t.date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</small><b>${safe(t.name)}</b></span><strong>${money(t.prize_pool)}</strong></article>`).join("") || "<span>No tournaments announced yet.</span>";
+    if (tournaments) tournaments.innerHTML = data.tournaments.map(t => {
+      const date = new Date(t.date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+      const key = String(t.game || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      return `<article class="tournament-mini tournament-mini--${key}">
+        <figure class="tournament-figure"><span class="tourney-mark">✧</span><span class="tourney-date">${safe(date)}</span></figure>
+        <div class="tournament-content">
+          <span class="tourney-game">${safe(t.game)}</span>
+          <h3 class="tourney-name">${safe(t.name)}</h3>
+          <p class="tourney-desc">Follow our squads through the season and catch the next big moment.</p>
+        </div>
+        <footer class="tournament-footer">
+          <div class="tournament-detail"><span class="detail-label">Prize</span><p class="tourney-prize">${money(t.prize_pool)}</p></div>
+          <div class="tournament-detail"><span class="detail-label">Date</span><p>${safe(date)}</p></div>
+          <div class="tournament-detail"><span class="detail-label">Game</span><p>${safe(t.game)}</p></div>
+        </footer>
+      </article>`;
+    }).join("") || "<span>No tournaments announced yet.</span>";
   }).catch(() => { document.querySelectorAll("[data-stat]").forEach(el => el.textContent = "0"); const teams = document.querySelector("#public-teams"); if (teams) teams.innerHTML = `<div class="empty-public">Our team lineup will be here soon.</div>`; });
   const toggle = document.querySelector(".menu-toggle"), nav = document.querySelector("#public-nav");
   toggle?.addEventListener("click", () => { const open = toggle.getAttribute("aria-expanded") === "true"; toggle.setAttribute("aria-expanded", String(!open)); nav.classList.toggle("nav-open", !open); });
