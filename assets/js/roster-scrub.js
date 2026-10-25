@@ -125,7 +125,13 @@
     loadPlayers(panels[i], team);
   };
   fetch("/api/public").then(r => r.json()).then(data => {
-    (data.teams || []).slice(0, ids.length).forEach((team, i) => populate(ids[i], team, i));
+    const teams = data.teams || [];
+    const games = ["bgmi", "free fire", "valorant"];
+    ids.forEach((id, i) => {
+      const targetGame = games[i] || "";
+      const team = teams.find(t => String(t.game || "").trim().toLowerCase() === targetGame) || teams[i];
+      if (team) populate(id, team, i);
+    });
   }).catch(() => { /* server hiccup: placeholders stay; the page still works */ });
 
   /* ---------- clip plumbing ---------- */

@@ -368,6 +368,7 @@
 }
 .rs-pname {
   position: absolute;
+  z-index: 3;
   left: 11px;
   right: 11px;
   bottom: 6px;
@@ -384,6 +385,7 @@
 }
 .rs-prole {
   position: absolute;
+  z-index: 3;
   top: 6px;
   right: 6px;
   padding: 3px 8px 2px;

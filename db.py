@@ -105,10 +105,30 @@ def initialize() -> None:
             password = os.environ.get("RAPTOR_DEMO_PASSWORD", "Raptor@2026")
             salt, digest = hash_password(password)
             db.execute("INSERT INTO users(email,name,salt,password_hash) VALUES(?,?,?,?)", ("admin@raptor.local", "Admin", salt, digest))
-            teams = [("Raptor (BGMI)", "BGMI", 5, "India's next competitive BGMI lineup.", "violet"), ("Phoenix (Free Fire)", "Free Fire", 4, "Fast, fearless and always in the fight.", "amber"), ("Shadow (BGMI)", "BGMI", 3, "A rising roster built for the big stage.", "pink"), ("Vortex (Valorant)", "Valorant", 4, "Precision, teamwork, momentum.", "cyan")]
-            db.executemany("INSERT INTO teams(name,game,players_count,description,accent) VALUES(?,?,?,?,?)", teams)
-            players = [("Sanku", "Sanku", "IGL", 1, "Active", "BGMI"), ("Shisui", "Shisui", "Assaulter", 1, "Active", "BGMI"), ("Naruto", "Naruto", "Support", 1, "Active", "BGMI"), ("Dazzler", "Dazzler", "Assaulter", 1, "Active", "BGMI"), ("Zero", "Zero", "Support", 1, "Active", "BGMI"), ("Blaze", "Blaze", "IGL", 2, "Active", "Free Fire")]
-            db.executemany("INSERT INTO players(name,ign,role,team_id,status,game) VALUES(?,?,?,?,?,?)", players)
+            teams = [
+                (1, "Raptor Esports ", "BGMI", 5, "India's next competitive BGMI lineup.", "violet"),
+                (2, "Team Apex Gaming (TAG)", "Free Fire", 5, "Tag on top ", "cyan"),
+                (4, "Team Vitality ", "Valorant", 5, "Built to dominate, feared by many , stopped by none but the champions.", "pink"),
+            ]
+            db.executemany("INSERT INTO teams(id,name,game,players_count,description,accent) VALUES(?,?,?,?,?,?)", teams)
+            players = [
+                (1, "Sanku", "Sanku", "IGL", 1, "Active", "BGMI"),
+                (2, "Shisui", "Shisui", "Assaulter", 1, "Active", "BGMI"),
+                (3, "Naruto", "Naruto", "Support", 1, "Active", "BGMI"),
+                (4, "Dazzler", "Dazzler", "Assaulter", 1, "Active", "BGMI"),
+                (5, "Zero", "Zero", "Support", 1, "Active", "BGMI"),
+                (6, "Priyanshu", "KDgod", "IGL", 2, "Active", "Free Fire"),
+                (9, "Manav Shinde ", "SHOTO", "Rusher", 2, "Active", "Free Fire"),
+                (10, "Ayush Jangir", "Louis", "Rusher", 2, "Active", "Free Fire"),
+                (11, "Sahil Dahiya ", "Sahil", "Bomber", 2, "Active", "Free Fire"),
+                (12, "Dhruv Sharma", "Wolvin", "Supporter", 2, "Active", "Free Fire"),
+                (13, "Derke", "Derke", "Duelist", 4, "Active", "Valorant"),
+                (14, "Chronicle", "Chronicle", "Initiator", 4, "Active", "Valorant"),
+                (15, "Jamppi", "Jamppi", "IGL", 4, "Active", "Valorant"),
+                (16, "PROFEK", "PROFEK", "Controller", 4, "Active", "Valorant"),
+                (17, "Sayonara", "Sayonara", "Flex", 4, "Active", "Valorant"),
+            ]
+            db.executemany("INSERT INTO players(id,name,ign,role,team_id,status,game) VALUES(?,?,?,?,?,?,?)", players)
             today = date.today()
             tournaments = [("Raptor Cup #01", "BGMI", (today + timedelta(days=3)).isoformat(), 5000, "Upcoming", "Online"), ("Free Fire Showdown", "Free Fire", (today + timedelta(days=10)).isoformat(), 3000, "Ongoing", "Mumbai"), ("Valorant Challenge", "Valorant", (today + timedelta(days=23)).isoformat(), 4000, "Upcoming", "Online"), ("BGMI Scrims", "BGMI", (today + timedelta(days=30)).isoformat(), 2000, "Upcoming", "Online")]
             db.executemany("INSERT INTO tournaments(name,game,date,prize_pool,status,location) VALUES(?,?,?,?,?,?)", tournaments)
@@ -124,7 +144,6 @@ def initialize() -> None:
         _seed_role_accounts(db)
         db.execute("UPDATE matches SET team_id=(SELECT id FROM teams WHERE teams.game=matches.game ORDER BY id LIMIT 1) WHERE team_id IS NULL")
         db.execute("UPDATE tournaments SET team_id=(SELECT id FROM teams WHERE teams.game=tournaments.game ORDER BY id LIMIT 1) WHERE team_id IS NULL")
-    expand_sample_data()
     assign_player_avatars()
 
 
