@@ -672,7 +672,7 @@ class PortalHandler(BaseHTTPRequestHandler):
 
 def main():
     db.initialize()
-    host, port = "127.0.0.1", 5000
+    host, port = "127.0.0.1", 5050
     print(f"Raptor Esports portal running at http://{host}:{port}")
     print("Local demo accounts use Raptor@2026 (override with RAPTOR_DEMO_PASSWORD).")
     ThreadingHTTPServer((host, port), PortalHandler).serve_forever()

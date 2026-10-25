@@ -6,10 +6,11 @@
    beats. Overlays use transform/opacity only so scrubbing never
    costs a relayout; palette is the established Raptor violet set:
    #030010 #090227 #14053E #240A59 #5419A2 #792ACF #AE48ED #EB84F9 #6F012D #FDDAFE
-   Two display accents sit on top: a reference-red stencil face for
-   the team name + player names, and an angular italic face for the
-   THE ROSTER headline. Both faces are self-hosted OFL woff2 files
-   (assets/fonts) so the 'self' CSP holds.
+   Three display accents sit on top: a Valorant-style tall face for
+   the THE ROSTER headline (the user's own Valorant Font.ttf), a
+   reference-red stencil face for the team name, and a bright yellow
+   stencil face for the player names on the art cards. All faces are
+   self-hosted (assets/fonts) so the 'self' CSP holds.
    ------------------------------------------------------------------ */
 
 /* "Raptor Stencil" — the Revenge lettering look: blocky, stencil-cut,
@@ -21,11 +22,11 @@
   font-style: normal;
   font-display: swap;
 }
-/* "Raptor Dream" — the Dream lettering look: angular, futuristic. */
+/* "Raptor Valorant" — the tall condensed lettering for THE ROSTER. */
 @font-face {
-  font-family: "Raptor Dream";
-  src: url("/assets/fonts/orbitron-700.woff2") format("woff2");
-  font-weight: 700;
+  font-family: "Raptor Valorant";
+  src: url("/assets/fonts/Valorant%20Font.ttf") format("truetype");
+  font-weight: 400 900;
   font-style: normal;
   font-display: swap;
 }
@@ -37,7 +38,8 @@
   --rs-accent-2: #AE48ED;
   --rs-accent-3: #EB84F9;
   --rs-ink: #FDDAFE;
-  --rs-red: #E0181B; /* the Revenge reference red — names only */
+  --rs-red: #E0181B; /* the Revenge reference red — team name only */
+  --rs-yellow: #FFD84D; /* bright yellow — player names on the art cards */
   position: relative;
   height: calc(100vh * (1 + var(--rs-scroll)));
   height: calc(100svh * (1 + var(--rs-scroll)));
@@ -102,6 +104,27 @@
   mix-blend-mode: overlay;
 }
 
+/* watermark corner: the footage carries a watermark in its bottom-right
+   corner — this layer blurs and vignettes just that corner so it melts
+   into a soft lens-darkening instead of a visible stamp. The curved
+   radius + radial mask feather the edges; the radial gradient does the
+   darkening. Same recipe as .hero-wm on the hero. */
+.rs-wm {
+  pointer-events: none;
+  position: absolute;
+  top: auto; left: auto; /* break away from the blanket .rs-media > * inset:0 rule */
+  right: 0;
+  bottom: 0;
+  width: clamp(200px, 26vw, 430px);
+  height: clamp(120px, 22vh, 240px);
+  border-top-left-radius: 100% 100%;
+  backdrop-filter: blur(18px) saturate(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.05);
+  background: radial-gradient(125% 125% at 100% 100%, rgba(3,0,16,.68) 26%, rgba(3,0,16,.32) 52%, rgba(3,0,16,0) 74%);
+  -webkit-mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 68%);
+  mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 68%);
+}
+
 /* ---- copy ------------------------------------------------------- */
 
 .rs-copy {
@@ -116,12 +139,13 @@
   display: block;
   opacity: 0;
   transform: translateY(26px);
+  transform-origin: left top; /* the compaction shrinks toward the left bezel — never over the character */
   filter: blur(6px);
   transition: opacity .8s ease, transform .8s cubic-bezier(.16,.84,.28,1), filter .8s ease, letter-spacing .8s ease;
   letter-spacing: .02em;
 }
 #roster-scrub.rs-open .rs-heading { opacity: 1; transform: none; filter: blur(0); }
-#roster-scrub.rs-open .rs-heading.rs-compacted { opacity: .86; transform: scale(.465) translateX(.4vw); }
+#roster-scrub.rs-open .rs-heading.rs-compacted { opacity: .86; transform: scale(.28); }
 
 .rs-kicker {
   display: block;
@@ -134,15 +158,13 @@
   text-shadow: 0 2px 22px rgba(159,10,163,.45);
 }
 .rs-title {
-  font-family: "Raptor Dream", "Orbitron", "Michroma", Impact, system-ui, sans-serif;
-  font-weight: 700;
+  font-family: "Raptor Valorant", "Anton", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 400;
   display: block;
   margin: 14px 0 0;
-  font-size: clamp(44px, 6vw, 92px);
+  font-size: clamp(48px, 7vw, 108px); /* the Valorant face is tall and condensed — it can carry more point */
   line-height: .95;
   text-transform: uppercase;
-  transform: skewX(-9deg); /* the Dream mark's forward-lean */
-  transform-origin: left top;
   background: linear-gradient(101deg, #FDDAFE 6%, #EB84F9 38%, #AE48ED 66%, #792ACF 96%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -151,8 +173,9 @@
   white-space: nowrap;
 }
 
-/* team identity: lower-left stack, like the original roster block —
-   logo, game label, name, tagline, count; crossfaded by scrub time */
+/* team identity: lower-left badge stack, centered — game label white
+   on top, then the centered logo, then the red stencil team name,
+   tagline, count; crossfaded by scrub time */
 .rs-ident {
   position: absolute;
   left: var(--rs-bezel);
@@ -169,32 +192,34 @@
   transform: translateY(18px);
   will-change: opacity, transform;
   color: #FDDAFE;
+  text-align: center;
 }
 .rs-team-logo {
-  float: left;
   display: block;
-  width: 52px; height: 52px;
+  width: 56px; height: 56px;
+  margin: 9px auto 7px;
   object-fit: contain;
-  border-radius: 11px;
+  border-radius: 12px;
   padding: 3px;
   background: radial-gradient(75% 75% at 50% 40%, rgba(174,72,237,.24), transparent 72%);
   filter: drop-shadow(0 4px 14px rgba(84,25,162,.55)) saturate(1.08);
 }
 .rs-team-game {
   display: block;
-  margin: 6px 0 0 66px;
+  margin: 2px auto 0;
   font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
   font-weight: 600;
   font-size: 11px;
   letter-spacing: .4em;
   text-transform: uppercase;
-  color: var(--rs-kc, #EB84F9);
+  color: #FFFFFF;
+  text-shadow: 0 2px 14px rgba(3,0,16,.85), 0 0 24px rgba(3,0,16,.6);
 }
 /* the Revenge treatment: red stencil display — scoped to exactly the
-   team name (here) and the player names (on the cards) */
+   team name (here); the player names on the cards go bright yellow */
 .rs-team-name {
   display: block;
-  margin: 4px 0 0 60px;
+  margin: 0 auto;
   font-family: "Raptor Stencil", "Anton", Impact, "Arial Narrow", sans-serif;
   font-weight: 400;
   font-size: clamp(30px, 3.7vw, 50px);
@@ -204,8 +229,7 @@
   text-shadow: 0 2px 22px rgba(224,24,27,.4), 0 4px 24px rgba(3,0,16,.9);
 }
 .rs-team-line {
-  clear: both;
-  margin: 12px 0 0;
+  margin: 11px auto 0;
   max-width: 44ch;
   font-size: 14px;
   line-height: 1.62;
@@ -217,16 +241,17 @@
 }
 .rs-team-under {
   display: block;
-  width: 64px;
+  width: 72px;
   height: 2px;
-  margin: 14px 0 10px;
+  margin: 14px auto 10px;
   border-radius: 2px;
-  background: linear-gradient(90deg, var(--rs-kc, #AE48ED), transparent);
+  background: linear-gradient(90deg, transparent, var(--rs-kc, #AE48ED), transparent);
   box-shadow: 0 0 18px var(--rs-kc, #AE48ED);
 }
 .rs-team-foot {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 9px;
 }
 .rs-team-foot strong {
@@ -247,7 +272,8 @@
 
 /* player cards: right side, players only — the suit reveal stays
    unobstructed; each card is the player's own artwork from the DB
-   with the red stencil IGN over it and the role riding as a chip */
+   with the bright yellow stencil IGN over it and the role riding as
+   a chip */
 .rs-side {
   position: absolute;
   top: 50%;
@@ -283,6 +309,21 @@
   border-radius: 2px;
   background: linear-gradient(90deg, var(--rs-kc, #AE48ED), transparent);
   box-shadow: 0 0 18px var(--rs-kc, #AE48ED);
+}
+
+/* the "Player" label: white spaced-caps heading at the top of the
+   panel, same treatment as the white game labels on the left */
+.rs-ptitle {
+  display: block;
+  flex: 0 0 auto;
+  margin: 10px 10px 8px;
+  font-family: "Oswald", Impact, "Arial Narrow", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  text-shadow: 0 2px 14px rgba(3,0,16,.85);
 }
 
 .rs-players {
@@ -335,11 +376,11 @@
   font-size: clamp(15px, 1.35vw, 19px);
   line-height: 1;
   text-transform: uppercase;
-  color: var(--rs-red, #E0181B);
+  color: var(--rs-yellow, #FFD84D);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0 2px 10px rgba(3,0,16,.9), 0 0 16px rgba(224,24,27,.35);
+  text-shadow: 0 2px 10px rgba(3,0,16,.9), 0 0 16px rgba(255,216,77,.35);
 }
 .rs-prole {
   position: absolute;
@@ -497,18 +538,18 @@
 @media (max-width: 860px) {
   #roster-scrub { --rs-scroll: 4.8; }
   .rs-title { font-size: clamp(30px, 8.6vw, 46px); }
-  #roster-scrub.rs-open .rs-heading.rs-compacted { transform: scale(.5) translateX(1vw); }
+  #roster-scrub.rs-open .rs-heading.rs-compacted { transform: scale(.34); }
   .rs-copy { padding: calc(74px + 3vh) 20px calc(110px + env(safe-area-inset-bottom)); }
 
-  /* identity travels with the copy flow, compact */
-  .rs-ident { position: relative; left: auto; bottom: auto; width: auto; height: 132px; margin-top: 14px; }
+  /* identity travels with the copy flow, compact: centered badge stack */
+  .rs-ident { position: relative; left: auto; bottom: auto; width: auto; height: 150px; margin-top: 14px; }
   .rs-id { left: 0; right: 0; width: auto; }
-  .rs-team-logo { width: 38px; height: 38px; border-radius: 9px; padding: 2px; }
-  .rs-team-game { margin: 4px 0 0 46px; font-size: 10px; }
-  .rs-team-name { margin: 3px 0 0 42px; font-size: clamp(21px, 6.4vw, 30px); }
-  .rs-team-line { margin-top: 8px; font-size: 12px; line-height: 1.45; -webkit-line-clamp: 1; }
+  .rs-team-logo { width: 34px; height: 34px; margin: 6px auto 4px; border-radius: 8px; padding: 2px; }
+  .rs-team-game { margin: 0 auto; font-size: 10px; }
+  .rs-team-name { margin: 0 auto; font-size: clamp(21px, 6.4vw, 30px); }
+  .rs-team-line { margin: 6px auto 0; max-width: 64vw; font-size: 12px; line-height: 1.45; -webkit-line-clamp: 1; }
   .rs-team-under { display: none; }
-  .rs-team-foot { margin-top: 5px; }
+  .rs-team-foot { margin-top: 4px; }
   .rs-team-foot strong { font-size: 17px; }
 
   /* players: bottom sheet, art cards in two columns */
@@ -531,6 +572,7 @@
     background: linear-gradient(152deg, rgba(20,5,62,.92), rgba(9,2,39,.84));
   }
   .rs-panel::before { left: 14px; }
+  .rs-ptitle { margin: 2px 6px 5px; font-size: 9.5px; }
   .rs-players { flex: 0 0 auto; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-rows: minmax(58px, auto); gap: 5px; }
   .rs-pcard { border-radius: 9px; }
   .rs-pname { left: 8px; right: 8px; bottom: 4px; font-size: 12.5px; }
@@ -555,7 +597,7 @@
 }
 
 @media (max-width: 480px) {
-  .rs-ident { height: 112px; }
+  .rs-ident { height: 118px; }
   .rs-team-line { display: none; }
   .rs-side { bottom: calc(118px + env(safe-area-inset-bottom)); }
   .rs-players { grid-auto-rows: minmax(50px, auto); }
@@ -573,7 +615,7 @@
     padding: 84px var(--rs-bezel) 64px;
   }
   .rs-media { position: relative; inset: auto; height: clamp(240px, 34vw, 472px); border-radius: 16px; overflow: hidden; border: 1px solid rgba(174,72,237,.28); box-shadow: 0 30px 80px rgba(3,0,16,.6); }
-  .rs-video, .rs-glow, .rs-scrim, .rs-grain, .rs-cue, .rs-rail { display: none; }
+  .rs-video, .rs-glow, .rs-wm, .rs-scrim, .rs-grain, .rs-cue, .rs-rail { display: none; }
   .rs-copy { position: relative; inset: auto; padding: 34px 0 0; }
   .rs-heading, .rs-cta { opacity: 1 !important; transform: none !important; filter: none; }
   .rs-heading.rs-compacted { transform: none !important; }

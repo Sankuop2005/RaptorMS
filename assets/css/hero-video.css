@@ -29,6 +29,29 @@
   opacity: 1;
 }
 
+/* watermark corner: shared recipe with the roster's .rs-wm — the
+   footage carries a watermark in its bottom-right corner; this layer
+   blurs and vignettes just that corner so it melts into a soft lens
+   darkening instead of a visible stamp.
+   ------------------------------------------------------------------ */
+
+/* watermark corner: curved feather + backdrop blur + vignette */
+.hero-wm {
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: clamp(200px, 26vw, 430px);
+  height: clamp(120px, 22vh, 240px);
+  border-top-left-radius: 100% 100%;
+  backdrop-filter: blur(18px) saturate(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.05);
+  background: radial-gradient(125% 125% at 100% 100%, rgba(8,10,18,.68) 26%, rgba(8,10,18,.32) 52%, rgba(8,10,18,0) 74%);
+  -webkit-mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 68%);
+  mask-image: radial-gradient(130% 130% at 100% 100%, #000 30%, transparent 68%);
+  z-index: 1; /* over .hero-video (z 0), under the .hero-art:after scrim */
+}
+
 /* narrow screens: bias the crop toward the right, same as the still */
 @media (max-width: 700px) {
   .hero-video { object-position: 62% center; }
@@ -37,5 +60,5 @@
 /* reduced motion: no autoplaying footage — the still image carries
    the hero exactly as it did before the video existed */
 @media (prefers-reduced-motion: reduce) {
-  .hero-video { display: none; }
+  .hero-video, .hero-wm { display: none; }
 }
