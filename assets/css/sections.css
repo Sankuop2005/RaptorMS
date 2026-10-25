@@ -173,6 +173,11 @@ html.sec-js .tournament-banner.tn-in .tn-reveal { opacity: 1; transform: none; }
   transform: translateY(16px);
   transition: opacity .8s ease .25s, transform .8s cubic-bezier(.16, .84, .28, 1) .25s;
 }
+.tn-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: stretch;
+}
 html.sec-js .tournament-banner.tn-in .tn-track { opacity: 1; transform: translateY(0); }
 html.sec-js .tournament-banner.tn-run .tn-track {
   animation: tn-marquee var(--tn-speed, 40s) linear infinite;
