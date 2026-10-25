@@ -35,7 +35,7 @@
       const where = String(t.location || "").trim();
       const meta = [live ? "Ongoing" : String(t.status || "Upcoming").trim(), where].filter(Boolean).join(" · ");
       return `<article class="tournament-mini tournament-mini--${key}">
-        <figure class="tournament-figure">${live ? '<span class="tourney-live"><i></i>LIVE</span>' : ""}<span class="tourney-mark">✧</span><span class="tourney-date">${safe(date)}</span></figure>
+        <figure class="tournament-figure">${live ? '<span class="tourney-live"><i></i>LIVE</span>' : ""}<span class="tourney-date">${safe(date)}</span></figure>
         <div class="tournament-body">
           <div class="tournament-content">
             <span class="tourney-game">${safe(t.game)}</span>
